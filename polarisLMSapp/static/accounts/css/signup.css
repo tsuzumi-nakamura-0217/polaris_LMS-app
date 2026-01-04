@@ -1,0 +1,11 @@
+/* サインアップページ専用スタイル */
+
+/* 学年フィールドの表示/非表示制御 */
+#grade-field {
+    display: none;
+    transition: opacity 0.3s ease;
+}
+
+#grade-field.show {
+    display: block;
+}

@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学びのポラリスへようこそ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'accounts/css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'accounts/css/welcome.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1 class="title">学びのポラリスへようこそ！</h1>
+            
+            <p class="subtitle">該当ページを選択してください</p>
+            
+            <div class="role-selection">
+                <a href="{% url 'accounts:login' %}?role=student" class="role-button">
+                    <div class="circle">
+                        <span class="role-text">生徒</span>
+                    </div>
+                </a>
+                
+                <a href="{% url 'accounts:login' %}?role=guardian" class="role-button">
+                    <div class="circle">
+                        <span class="role-text">保護者</span>
+                    </div>
+                </a>
+                
+                <a href="{% url 'accounts:login' %}?role=staff" class="role-button">
+                    <div class="circle">
+                        <span class="role-text">スタッフ</span>
+                    </div>
+                </a>
+                
+                <a href="{% url 'accounts:login' %}?role=admin" class="role-button">
+                    <div class="circle">
+                        <span class="role-text">管理者</span>
+                    </div>
+                </a>
+            </div>
+            
+            <a href="{% url 'accounts:signup' %}" class="register-button">
+                新規登録はこちら
+            </a>
+        </div>
+    </div>
+</body>
+</html>

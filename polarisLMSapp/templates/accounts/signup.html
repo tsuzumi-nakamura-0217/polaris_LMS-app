@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新規登録</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'accounts/css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'accounts/css/auth-common.css' %}">
+    <link rel="stylesheet" href="{% static 'accounts/css/signup.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>新規登録</h1>
+        <form method="post">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <ul class="errorlist">
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <div>
+                <label for="id_user_name">ユーザー名:<span class="required-mark">*</span></label>
+                {{ form.user_name }}
+                {% if form.user_name.errors %}
+                    <div class="field-error">{{ form.user_name.errors|join:"," }}</div>
+                {% endif %}
+            </div>
+            <div>
+                <label for="id_user_type">ユーザーロール:<span class="required-mark">*</span></label>
+                {{ form.user_type }}
+                {% if form.user_type.errors %}
+                    <div class="field-error">{{ form.user_type.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+            <div id="grade-field">
+                <label for="id_grade">学年<span class="required-mark">*</span></label>
+                {{ form.grade }}
+                {% if form.grade.help_text %}
+                    <span class="help-text">{{ form.grade.help_text }}</span>
+                {% endif %}
+                {% if form.grade.errors %}
+                    <div class="field-error">{{ form.grade.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+            <div>
+                <label for="id_password1">パスワード:<span class="required-mark">*</span></label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <div class="field-error">{{ form.password1.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+            <div>
+                <label for="id_password2">パスワード確認:<span class="required-mark">*</span></label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div class="field-error">{{ form.password2.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+            <button type="submit">登録</button>
+        </form>
+        <a href="{% url 'accounts:welcome' %}">ようこそページに戻る</a>
+    </div>
+    <script src="{% static 'accounts/js/signup.js' %}"></script>
+</body>
+</html>

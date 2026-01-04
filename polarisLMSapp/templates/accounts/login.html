@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'accounts/css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'accounts/css/auth-common.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>
+            {% if role == 'student' %} 生徒用ログイン
+            {% elif role == 'guardian' %} 保護者用ログイン
+            {% elif role == 'staff' %} スタッフ用ログイン
+            {% elif role == 'admin' %} 管理者用ログイン
+            {% else %} ログイン
+            {% endif %}
+        </h1>
+        <form method="post">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <ul class="errorlist">
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <div>
+                <label for="id_username">ユーザー名:</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="field-error">{{ form.username.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+            <div>
+                <label for="id_password">パスワード:</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                    <div class="field-error">{{ form.password.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+            <input type="hidden" name="role" value="{{ role }}">
+            <button type="submit">ログイン</button>
+        </form>
+        <a href="{% url 'accounts:welcome' %}">ようこそページに戻る</a>
+    </div>
+</body>
+</html>

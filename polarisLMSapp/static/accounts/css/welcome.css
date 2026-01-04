@@ -1,0 +1,179 @@
+/* ウェルカムページのスタイル */
+
+body {
+    font-family: var(--font-family-base);
+    background-color: var(--color-background);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: var(--spacing-lg);
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+}
+
+.card {
+    background: var(--color-white);
+    border-radius: var(--border-radius-md);
+    padding: 80px 60px;
+    box-shadow: var(--shadow-default);
+    text-align: center;
+}
+
+.title {
+    color: #444;
+    font-size: 48px;
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.2;
+}
+
+.subtitle {
+    color: #444;
+    font-size: 25px;
+    font-weight: var(--font-weight-bold);
+    margin-bottom: 50px;
+}
+
+/* ロール選択ボタンのコンテナ */
+.role-selection {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 60px;
+}
+
+/* ロールボタン */
+.role-button {
+    text-decoration: none;
+    transition: transform var(--transition-base);
+    cursor: pointer;
+}
+
+.role-button:hover {
+    transform: translateY(-8px);
+}
+
+.role-button .circle {
+    width: 206px;
+    height: 206px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    transition: all var(--transition-base);
+}
+
+.role-button:hover .circle {
+    background: var(--color-primary-dark);
+    transform: scale(1.05);
+}
+
+.role-text {
+    font-size: 30px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-white);
+    line-height: 1;
+}
+
+/* 新規登録ボタン */
+.register-button {
+    display: inline-block;
+    padding: 13px 50px;
+    background: var(--color-accent);
+    color: var(--color-white);
+    text-decoration: none;
+    border-radius: var(--border-radius-lg);
+    font-weight: var(--font-weight-bold);
+    font-size: 20px;
+    transition: all var(--transition-base);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.register-button:hover {
+    background: var(--color-accent-dark);
+    transform: scale(1.05);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 1024px) {
+    .card {
+        padding: 60px 40px;
+    }
+    
+    .title {
+        font-size: 36px;
+    }
+    
+    .subtitle {
+        font-size: 20px;
+    }
+    
+    .role-selection {
+        gap: 30px;
+    }
+    
+    .role-button .circle {
+        width: 160px;
+        height: 160px;
+    }
+    
+    .role-text {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .card {
+        padding: 40px 30px;
+    }
+    
+    .title {
+        font-size: 28px;
+    }
+    
+    .subtitle {
+        font-size: 18px;
+        margin-bottom: 30px;
+    }
+    
+    .role-selection {
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    .role-button .circle {
+        width: 140px;
+        height: 140px;
+    }
+    
+    .role-text {
+        font-size: 20px;
+    }
+    
+    .register-button {
+        font-size: 18px;
+        padding: 12px 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .role-selection {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .role-button .circle {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .role-text {
+        font-size: 18px;
+    }
+}
