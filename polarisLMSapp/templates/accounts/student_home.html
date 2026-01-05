@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}ホーム - 学びのポラリス{% endblock %}
+
+{% block nav_home %}active{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/student_home.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="main-content">
+            <!-- ヘッダー -->
+            <header class="page-header">
+                <h1 class="greeting">{{ user.user_name }}さん、こんにちは！</h1>
+                <div class="stats">
+                    <div class="stat-item">
+                        <p class="stat-label">総ログイン日数</p>
+                        <div class="stat-value">{{ total_login_days|default:"10" }}</div>
+                    </div>
+                    <div class="stat-item">
+                        <p class="stat-label">連続ログイン日数</p>
+                        <div class="stat-value">{{ consecutive_login_days|default:"10" }}</div>
+                    </div>
+                    <div class="stat-item">
+                        <p class="stat-label">問題回答数</p>
+                        <div class="stat-value">{{ total_answers|default:"10" }}</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- カレンダーセクション -->
+            <section class="calendar-section">
+                <div class="section-header">
+                    <h2 class="section-title">カレンダー</h2>
+                    <div class="calendar-controls">
+                        <button class="calendar-nav" id="prevMonth">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <polyline points="15 18 9 12 15 6" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </button>
+                        <div class="calendar-month">
+                            <span class="month-text" id="currentMonth">○月</span>, <span class="year-text">2025</span>
+                        </div>
+                        <button class="calendar-nav" id="nextMonth">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <polyline points="9 18 15 12 9 6" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="calendar">
+                    <div class="calendar-header">
+                        <div class="calendar-weekday">日</div>
+                        <div class="calendar-weekday">月</div>
+                        <div class="calendar-weekday">火</div>
+                        <div class="calendar-weekday">水</div>
+                        <div class="calendar-weekday">木</div>
+                        <div class="calendar-weekday">金</div>
+                        <div class="calendar-weekday">土</div>
+                    </div>
+                    <div class="calendar-body" id="calendarBody">
+                        <!-- カレンダーの日付はJavaScriptで生成 -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 今日やることサイドバー -->
+        <aside class="tasks-sidebar">
+            <div class="tasks-header">
+                <svg class="tasks-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 11l3 3L22 4" stroke="currentColor" stroke-width="2"/>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <h2 class="tasks-title">今日やること</h2>
+                <div class="tasks-count">
+                    <span class="count-number">{{ tasks_count|default:"0" }}</span>
+                    <span class="count-label">問</span>
+                </div>
+            </div>
+
+            <div class="tasks-list" id="tasksList">
+                <!-- タスクカードはJavaScriptで生成またはDjangoテンプレートで繰り返し -->
+                {% for task in tasks %}
+                <div class="task-card">
+                    <h3 class="task-title">{{ task.title }}</h3>
+                    <div class="task-meta">
+                        <span class="task-date">{{ task.date }}</span>
+                        <span class="task-subject">{{ task.subject }}</span>
+                        <span class="task-grade">{{ task.grade }}</span>
+                    </div>
+                    <button class="task-checkbox" data-task-id="{{ task.id }}">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </button>
+                </div>
+                {% empty %}
+                <!-- デモ用のカード -->
+                <div class="task-card">
+                    <h3 class="task-title">{{タイトル}}</h3>
+                    <div class="task-meta">
+                        <span class="task-date">{{日付}}</span>
+                        <span class="task-subject">{{科目}}</span>
+                        <span class="task-grade">{{学年}}</span>
+                    </div>
+                    <button class="task-checkbox">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="task-card">
+                    <h3 class="task-title">{{タイトル}}</h3>
+                    <div class="task-meta">
+                        <span class="task-date">{{日付}}</span>
+                        <span class="task-subject">{{科目}}</span>
+                        <span class="task-grade">{{学年}}</span>
+                    </div>
+                    <button class="task-checkbox">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="task-card">
+                    <h3 class="task-title">{{タイトル}}</h3>
+                    <div class="task-meta">
+                        <span class="task-date">{{日付}}</span>
+                        <span class="task-subject">{{科目}}</span>
+                        <span class="task-grade">{{学年}}</span>
+                    </div>
+                    <button class="task-checkbox">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="tasks-scrollbar"></div>
+        </aside>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts/js/student_home.js' %}"></script>
+{% endblock %}

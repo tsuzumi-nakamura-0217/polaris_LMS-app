@@ -1,0 +1,563 @@
+/**
+ * 生徒ホーム画面のスタイルシート
+ * Figmaデザインに基づいた実装
+ */
+
+/* ===== ベーススタイル ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family-base);
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    overflow: hidden;
+}
+
+/* ===== レイアウト ===== */
+.container {
+    display: flex;
+    height: 100vh;
+    position: relative;
+}
+
+/* ===== サイドバーはbase.cssに移動 ===== */
+
+/* ===== メインコンテンツ ===== */
+.main-content {
+    flex: 1;
+    padding: 40px 50px;
+    background: white;
+    margin-left: 20px; /* サイドバーとの間隔 */
+    margin-right: 20px; /* タスクサイドバーとの間隔 */
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 20px; /* 角丸を追加 */
+    overflow-y: auto;
+    max-width: 1197px;
+    border: 1px solid #eee; /* 境界を明確にするために薄いボーダーを追加 */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05); /* シャドウを少し強調 */
+}
+
+/* ===== ヘッダー ===== */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* 上揃えに変更 */
+    margin-bottom: 40px;
+}
+
+.greeting {
+    font-size: 35px;
+    font-weight: 700;
+    color: #444;
+    line-height: 1.4;
+}
+
+.stats {
+    display: flex;
+    gap: 40px; /* 間隔を調整 */
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.stat-label {
+    font-size: 15px;
+    color: #484848;
+    white-space: nowrap;
+    font-weight: 400;
+}
+
+.stat-value {
+    width: 48px;
+    height: 48px;
+    background: #1c4587; /* 紺色 */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    font-weight: 400;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25); /* シャドウを追加 */
+}
+
+/* ===== カレンダーセクション ===== */
+.calendar-section {
+    margin-bottom: 40px;
+    max-width: 800px; /* カレンダーの幅を制限 */
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 23px;
+    font-weight: 700;
+    color: #444;
+    border-left: 5px solid #1c4587; /* 左側のアクセント線を追加 */
+    padding-left: 15px;
+}
+
+.calendar-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-left: auto;
+}
+
+.calendar-month {
+    /* 背景色などを削除し、テキストのみに */
+    background: transparent;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-size: 25px;
+    color: #1c4587;
+    font-weight: 700;
+}
+
+.year-text {
+    font-size: 18px;
+    color: #444;
+}
+
+.calendar-nav {
+    background: white;
+    border: 1px solid #b3b3b3;
+    border-radius: 5px;
+    width: 30px;
+    height: 30px; /* 正方形に */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.calendar-nav:hover {
+    background: #1c4587;
+    border-color: #1c4587;
+}
+
+.calendar-nav:hover svg {
+    color: white;
+}
+
+.calendar-nav svg {
+    width: 16px;
+    height: 16px;
+    color: #484848;
+}
+
+/* ===== カレンダー ===== */
+.calendar {
+    background: white;
+    border: 2px solid #b3b3b3;
+    border-radius: 10px; /* 角丸を少し大きく */
+    overflow: hidden;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: #e4eefe;
+    border-bottom: 2px solid #b3b3b3; /* ヘッダー下の線 */
+    height: 44px;
+}
+
+.calendar-weekday {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: #484848;
+    border-right: 1px solid #b3b3b3;
+}
+
+.calendar-weekday:last-child {
+    border-right: none;
+}
+
+.calendar-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    min-height: 500px; /* 高さを調整 */
+}
+
+.calendar-day {
+    border-right: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 5px 10px;
+    min-height: 80px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    background: white;
+}
+
+.calendar-day:nth-child(7n) {
+    border-right: none;
+}
+
+.calendar-day:hover {
+    background: #f0f8ff;
+}
+
+.calendar-day.other-month {
+    color: #ccc;
+    background: #fafafa;
+}
+
+.calendar-day.today {
+    background: #e3f2fd;
+}
+
+.calendar-day.today .day-number {
+    color: #1c4587;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.day-number {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #444;
+}
+
+/* ===== タスクサイドバー ===== */
+.tasks-sidebar {
+    width: 351px;
+    background: #e4eefe;
+    border-radius: 20px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: calc(100vh - 40px); /* 画面高さに合わせる */
+    margin-top: 20px;
+    margin-right: 20px;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tasks-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #fff; /* 白い線に変更 */
+}
+
+.tasks-icon {
+    width: 28px;
+    height: 28px;
+    color: #444;
+}
+
+.tasks-title {
+    font-size: 23px;
+    font-weight: 700;
+    color: #444;
+}
+
+.tasks-count {
+    margin-left: auto;
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.count-number {
+    font-size: 25px;
+    color: #1c4587;
+    font-weight: 700;
+}
+
+.count-label {
+    font-size: 15px;
+    color: #444;
+    font-weight: 700;
+}
+
+.tasks-list {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* スクロールバーのカスタマイズ */
+.tasks-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.tasks-list::-webkit-scrollbar-track {
+    background: #d9d9d9;
+    border-radius: 10px;
+}
+
+.tasks-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+/* ===== タスクカード ===== */
+.task-card {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    position: relative;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.task-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #444;
+    margin-bottom: 10px;
+    padding-right: 35px; /* チェックボックス分の余白 */
+}
+
+.task-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #444;
+}
+
+.task-checkbox {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    background: #fff;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.task-checkbox:hover {
+    border-color: #1c4587;
+}
+
+.task-checkbox svg {
+    width: 14px;
+    height: 14px;
+    color: white;
+    stroke-width: 3;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.task-card.completed .task-checkbox {
+    background: #1c4587;
+    border-color: #1c4587;
+}
+
+.task-card.completed .task-checkbox svg {
+    opacity: 1;
+}
+
+.task-card.completed .task-title {
+    text-decoration: line-through;
+    color: #888;
+}
+
+/* ===== レスポンシブ対応 ===== */
+@media (max-width: 1400px) {
+    .main-content {
+        margin-left: 20px;
+        margin-right: 20px;
+        padding: 30px;
+    }
+    
+    .tasks-sidebar {
+        width: 300px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .container {
+        flex-wrap: wrap;
+        height: auto; /* 高さを自動に */
+        overflow-y: auto;
+    }
+
+    .main-content {
+        margin: 20px;
+        max-width: none;
+        padding: 30px;
+        flex: 1 1 100%; /* 全幅を使う */
+        height: auto;
+        overflow: visible;
+    }
+    
+    .tasks-sidebar {
+        width: auto;
+        flex: 1 1 100%;
+        margin: 0 20px 20px 20px;
+        height: auto;
+        max-height: 500px;
+    }
+
+    .tasks-list {
+        flex-direction: row; /* 横並びに */
+        flex-wrap: wrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-bottom: 10px;
+    }
+
+    .task-card {
+        flex: 0 0 300px; /* カードの幅を固定 */
+        height: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 20px;
+        margin: 15px;
+        border-radius: 15px;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+    
+    .greeting {
+        font-size: 24px;
+    }
+    
+    .stats {
+        width: 100%;
+        justify-content: space-between;
+        gap: 10px;
+    }
+    
+    .stat-item {
+        flex: 1;
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 10px;
+    }
+    
+    .stat-label {
+        font-size: 12px;
+    }
+    
+    .stat-value {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    /* カレンダー */
+    .section-header {
+        flex-wrap: wrap;
+    }
+    
+    .calendar-controls {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+    
+    .calendar-body {
+        min-height: 350px;
+    }
+    
+    .calendar-day {
+        min-height: 50px;
+        padding: 2px;
+    }
+    
+    .day-number {
+        font-size: 12px;
+    }
+    
+    /* タスクサイドバー */
+    .tasks-sidebar {
+        margin: 0 15px 20px 15px;
+        padding: 15px;
+    }
+    
+    .tasks-list {
+        flex-direction: column; /* 縦並びに戻す */
+        overflow-y: auto;
+        max-height: 300px;
+    }
+    
+    .task-card {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .greeting {
+        font-size: 20px;
+    }
+    
+    .stats {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .stat-item {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+    }
+    
+    .calendar-month {
+        font-size: 20px;
+    }
+    
+    .year-text {
+        font-size: 14px;
+    }
+    
+    .calendar-weekday {
+        font-size: 12px;
+    }
+}
