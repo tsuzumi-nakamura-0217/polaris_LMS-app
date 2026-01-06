@@ -6,8 +6,8 @@ urlpatterns = [
     path('welcome/', views.welcome, name='welcome'),
     path('signup/', views.signup, name='signup'),
     path('login/', views.CustomLoginView.as_view(), name='login'),
-    path('student_home/<user_name>/', views.tohome, name='student_home'),
-    path('guardian_home/<user_name>/', views.tohome, name='guardian_home'),
-    path('staff_home/<user_name>/', views.tohome, name='staff_home'),    
-    path('admin_home/<user_name>/', views.tohome, name='admin_home'),
+    path('student_home/', views.student_home, name='student_home'),
+    path('guardian_home/', views.guardian_home, name='guardian_home'),
+    path('staff_home/', views.staff_home, name='staff_home'),    
+    path('admin_home/', views.admin_home, name='admin_home'),
 ]
