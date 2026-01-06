@@ -91,3 +91,7 @@ def staff_home(request):
 def admin_home(request):
     return render(request, 'accounts/admin_home.html')
 
+# ログアウト
+class CustomLogoutView(LogoutView):
+    next_page = reverse_lazy('accounts:welcome')
+    template_name = 'accounts/base.html'
