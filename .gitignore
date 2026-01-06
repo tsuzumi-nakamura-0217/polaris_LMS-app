@@ -54,3 +54,6 @@ htmlcov/
 
 # Node (if present)
 node_modules/
+
+# プロンプト
+メンタープロンプト.md
