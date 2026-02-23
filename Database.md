@@ -43,13 +43,23 @@
 | 備考   |     |            | 例：分数の計算     |       | 表示順序          | 使用可能かどうか  |
 
 # Problem
-|      | id  | category_id | problem      | answer       | difficulty | display_order | is_active | created_at |
-| ---- | --- | ----------- | ------------ | ------------ | ---------- | ------------- | --------- | ---------- |
-| 制約   | 必須  | 必須          | 必須           | 必須           |            |               | 必須        |            |
-| データ型 | INT | INT         | VARCHAR(500) | VARCHAR(200) | INT        | INT           | BOOL      | DATETIME   |
-| 主キー  | ○   |             |              |              |            |               |           |            |
-| 外部キー |     | Problem_Category |              |              |            |               |           |            |
-| 備考   |     |             | 問題文          | 正解           | 難易度1-5     | 表示順序          | 使用可能かどうか  |            |
+|      | id  | category_id | problem_type | problem      | answer       | difficulty | display_order | is_active | created_at |
+| ---- | --- | ----------- | ------------ | ------------ | ------------ | ---------- | ------------- | --------- | ---------- |
+| 制約   | 必須  | 必須          | 必須           | 必須           | 必須           |            |               | 必須        |            |
+| データ型 | INT | INT         | VARCHAR(10)  | VARCHAR(500) | VARCHAR(200) | INT        | INT           | BOOL      | DATETIME   |
+| 主キー  | ○   |             |              |              |              |            |               |           |            |
+| 外部キー |     | Problem_Category |              |              |              |            |               |           |            |
+| 備考   |     |             | text/choice  | 問題文          | 正解（記述式の場合）  | 難易度1-5     | 表示順序          | 使用可能かどうか  |            |
+
+# Choice（選択肢テーブル）
+|      | id  | problem_id | choice_label | choice_text  | is_correct | display_order |
+| ---- | --- | ---------- | ------------ | ------------ | ---------- | ------------- |
+| 制約   | 必須  | 必須         | 必須           | 必須           | 必須         |               |
+| データ型 | INT | INT        | VARCHAR(10)  | VARCHAR(200) | BOOL       | INT           |
+| 主キー  | ○   |            |              |              |            |               |
+| 外部キー |     | Problem    |              |              |            |               |
+| 備考   |     |            | ア・イ・ウ・エ等   | 選択肢の本文       | 正解の選択肢かどうか | 表示順序          |
+
 
 # Schedule
 |      | id  | student_id | problem_id | status_id | scheduled_date | created_at | updated_at | memo         |
