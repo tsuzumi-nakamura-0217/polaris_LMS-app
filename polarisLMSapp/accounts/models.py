@@ -85,7 +85,7 @@ class StaffStudent(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='staff_relations',
-        limit_choices_to={'user_type': 'student'}
+        limit_choices_to={'user_type': 'staff'}
     )
     student = models.ForeignKey(
         User,
@@ -93,7 +93,8 @@ class StaffStudent(models.Model):
         related_name='student_staffs',
         limit_choices_to={'user_type': 'student'}
     )
-    created_at = models.DateTimeField(auto_now_add=True)
+    assigned_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField('有効',default=True)
 
     def __str__(self):
         return f'{self.staff.user_name} → {self.student.user_name}'
