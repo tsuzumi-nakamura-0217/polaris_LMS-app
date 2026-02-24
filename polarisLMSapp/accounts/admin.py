@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User
+from .models import User, GuardianStudent, StaffStudent
 
 
 @admin.register(User)
@@ -27,3 +27,12 @@ class UserAdmin(BaseUserAdmin):
     )
     
     readonly_fields = ['created_at', 'updated_at', 'last_login']
+
+@admin.register(GuardianStudent)
+class GuardianStudentAdmin(admin.ModelAdmin):
+    list_display = ('guardian', 'student', 'relation', 'created_at')
+
+@admin.register(StaffStudent)
+class StaffStudentAdmin(admin.ModelAdmin):
+    list_display = ('staff', 'student', 'assigned_at', 'is_active')
+    
