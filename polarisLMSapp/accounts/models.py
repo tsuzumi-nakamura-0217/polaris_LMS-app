@@ -58,3 +58,42 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     def __str__(self):
         return f"{self.user_name} ({self.get_user_type_display()})"
+    
+# 保護者-生徒 テーブル
+class GuardianStudent(models.Model):
+    guardian = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='guardian_relations',
+        limit_choices_to={'user_type': 'guardian'}
+    )
+    student = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='student_guardian',
+        limit_choices_to={'user_type': 'student'}
+    )
+    relation = models.CharField(max_length=20, blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.guardian.user_name} → {self.student.user_name}'
+
+# スタッフ-生徒 テーブル
+class StaffStudent(models.Model):
+    staff = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='staff_relations',
+        limit_choices_to={'user_type': 'student'}
+    )
+    student = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='student_staffs',
+        limit_choices_to={'user_type': 'student'}
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.staff.user_name} → {self.student.user_name}'
