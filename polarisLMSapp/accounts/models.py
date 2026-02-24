@@ -76,6 +76,12 @@ class GuardianStudent(models.Model):
     relation = models.CharField(max_length=20, blank=True, default='')
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name = '保護者-生徒'
+        verbose_name_plural = '保護者-生徒'
+        constraints = [models.UniqueConstraint(fields=['guardian', 'student'], name='unique_guardian_student')]
+
+
     def __str__(self):
         return f'{self.guardian.user_name} → {self.student.user_name}'
 
@@ -95,6 +101,11 @@ class StaffStudent(models.Model):
     )
     assigned_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField('有効',default=True)
+
+    class Meta:
+        verbose_name = 'スタッフ-生徒'
+        verbose_name_plural = 'スタッフ-生徒'
+        constraints = [models.UniqueConstraint(fields=['staff', 'student'], name='unique_staff_student')]
 
     def __str__(self):
         return f'{self.staff.user_name} → {self.student.user_name}'
