@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Subject
+from .models import Subject, ProblemCategory
 
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
@@ -8,3 +8,9 @@ class SubjectAdmin(admin.ModelAdmin):
     list_filter = ('is_active',)
     search_fields = ('subject_name',)
     ordering = ('display_order',)
+
+
+@admin.register(ProblemCategory)
+class ProblemCategoryAdmin(admin.ModelAdmin):
+    list_display = ('title', 'subject', 'grade', 'display_order', 'is_active')
+    list_filter = ('subject', 'grade')
