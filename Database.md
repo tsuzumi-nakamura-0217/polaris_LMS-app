@@ -1,11 +1,11 @@
 # User（統合ユーザーテーブル）
-|      | id  | user_name   | password | user_type   | full_name   | grade | is_active | created_at | updated_at |
-| ---- | --- | ----------- | -------- | ----------- | ----------- | ----- | --------- | ---------- | ---------- |
-| 制約   | 必須  | 必須・ユニーク    | 必須       | 必須          | 必須          |       | 必須        |            |            |
-| データ型 | INT | VARCHAR(50) | CHAR(64) | VARCHAR(20) | VARCHAR(50) | INT   | BOOL      | DATETIME   | DATETIME   |
-| 主キー  | ○   |             |          |             |             |       |           |            |            |
-| 外部キー |     |             |          |             |             |       |           |            |            |
-| 備考   |     | ログイン用ID     | ハッシュ化    | student/guardian/staff/administrator | 表示名         | 生徒の場合のみ | デフォルトTrue |            |            |
+|      | id  | user_name   | password | user_type   | grade | is_active | created_at | updated_at |
+| ---- | --- | ----------- | -------- | ----------- | ----- | --------- | ---------- | ---------- |
+| 制約   | 必須  | 必須・ユニーク    | 必須       | 必須          |       | 必須        |            |            |
+| データ型 | INT | VARCHAR(50) | CHAR(64) | VARCHAR(20) | INT   | BOOL      | DATETIME   | DATETIME   |
+| 主キー  | ○   |             |          |             |       |           |            |            |
+| 外部キー |     |             |          |             |       |           |            |            |
+| 備考   |     | ログイン用ID     | ハッシュ化    | student/guardian/staff/administrator | 生徒の場合のみ | デフォルトTrue |            |            |
 
 # Guardian_Student（保護者-生徒 関係テーブル）
 |      | id  | guardian_id | student_id | relation    | created_at |
