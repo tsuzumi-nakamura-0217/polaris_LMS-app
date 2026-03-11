@@ -18,11 +18,7 @@ body {
 }
 
 /* ===== レイアウト ===== */
-.container {
-    display: flex;
-    height: 100vh;
-    position: relative;
-}
+/* .containerはbase.cssに移動しました */
 
 /* ===== サイドバーはbase.cssに移動 ===== */
 

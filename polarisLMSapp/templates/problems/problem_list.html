@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}問題一覧{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'problems/css/problem_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="problem-list-container">
+    <h1 class="page-title">問題一覧</h1>
+
+    <!-- フィルタフォーム -->
+    <div class="filter-section">
+        <form method="get" class="filter-form">
+            <div class="select-wrapper">
+                <select name="subject" class="filter-select">
+                    <option value="">全科目</option>
+                    {% for subject in subjects %}
+                    <option value="{{ subject.id }}" {% if selected_subject == subject.id %}selected{% endif %}>
+                        {{ subject.subject_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="filter-btn">絞り込む</button>
+        </form>
+    </div>
+
+    <!-- 問題リスト -->
+    <div class="problem-table-container">
+        <table class="problem-table">
+            <thead>
+                <tr>
+                    <th class="col-subject">科目</th>
+                    <th class="col-category">カテゴリ</th>
+                    <th class="col-problem">問題</th>
+                    <th class="col-difficulty">難易度</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for problem in problems %}
+                <tr class="problem-row" onclick="window.location='#'">
+                    <td class="col-subject">
+                        <span class="subject-badge">{{ problem.category.subject.subject_name }}</span>
+                    </td>
+                    <td class="col-category">{{ problem.category.title }}</td>
+                    <td class="col-problem">
+                        <div class="problem-text-truncate">{{ problem.problem }}</div>
+                    </td>
+                    <td class="col-difficulty">
+                        <span class="difficulty-badge" data-difficulty="{{ problem.difficulty|default:'未設定' }}">
+                            {{ problem.difficulty|default:"未設定" }}
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr class="empty-row">
+                    <td colspan="4">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
+                                <polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2"/>
+                                <line x1="9" y1="15" x2="15" y2="15" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <p>問題が見つかりません</p>
+                            <p class="empty-subtitle">条件を変更して再度検索してください</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
+{% endblock %}
