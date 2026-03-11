@@ -12,40 +12,49 @@
 
 /* ===== サイドバースタイル ===== */
 .sidebar {
-    width: 171px;
-    background: linear-gradient(180deg, #e4eefe 0%, #d8e9ff 100%);
-    box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25), 0px 4px 4px rgba(0, 0, 0, 0.25);
-    border-radius: 17px;
-    padding: 20px 15px;
+    width: 220px;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.04);
+    border-right: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 0 24px 24px 0;
+    padding: 30px 20px;
     display: flex;
     flex-direction: column;
     position: relative;
     z-index: 10;
-    margin-left: -12px;
     min-height: 100vh;
     flex-shrink: 0;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .sidebar-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    padding-left: 4px;
 }
 
 .sidebar-close {
     display: none;
-    background: none;
+    background: rgba(0, 0, 0, 0.05);
     border: none;
+    border-radius: 50%;
     cursor: pointer;
-    padding: 5px;
+    padding: 8px;
     margin-left: auto;
+    transition: background 0.2s ease;
+}
+
+.sidebar-close:hover {
+    background: rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-close svg {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     color: #484848;
 }
 
@@ -56,77 +65,74 @@
 .logo img {
     width: 100%;
     height: auto;
-    max-width: 150px;
+    max-width: 140px;
 }
 
 .checkin-btn {
-    background: #1ddb1d;
+    background: linear-gradient(135deg, #1ddb1d 0%, #15b915 100%);
     color: white;
     border: none;
-    border-radius: 5px;
-    padding: 10px 15px;
+    border-radius: 14px;
+    padding: 14px 16px;
     font-size: 15px;
     font-weight: 700;
+    letter-spacing: 0.5px;
     cursor: pointer;
-    margin-bottom: 30px;
-    transition: background 0.3s ease;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 12px rgba(29, 219, 29, 0.25);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .checkin-btn:hover {
-    background: #17b317;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(29, 219, 29, 0.35);
 }
 
 .checkin-btn:active {
-    transform: scale(0.98);
+    transform: translateY(0) scale(0.98);
 }
 
 .nav-menu {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 8px;
     flex: 1;
 }
 
 .nav-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 8px 15px;
-    color: #484848;
+    gap: 14px;
+    padding: 12px 16px;
+    color: #6e6e73;
     text-decoration: none;
-    font-size: 18px;
-    font-weight: 700;
-    transition: all 0.3s ease;
-    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 12px;
     position: relative;
 }
 
 .nav-item:hover {
-    background: rgba(255, 255, 255, 0.5);
+    background: #f5f5f7;
+    color: #1d1d1f;
 }
 
 .nav-item.active {
-    background: white;
-}
-
-.nav-item.active::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 80%;
-    background: #1c4587;
-    border-radius: 0 2px 2px 0;
+    background: rgba(43, 91, 158, 0.08); /* Primary color light */
+    color: var(--color-primary, #2b5b9e);
 }
 
 .nav-icon {
-    width: 24px;
-    height: 24px;
-    color: #484848;
+    width: 22px;
+    height: 22px;
+    color: currentColor;
     flex-shrink: 0;
+    transition: color 0.2s ease;
 }
 
 /* ===== モバイルメニュートグル ===== */
@@ -189,7 +195,8 @@
     }
     
     .nav-item {
-        font-size: 16px;
+        font-size: 15px;
+        padding: 10px 14px;
     }
     
     .nav-icon {
@@ -215,7 +222,7 @@
         width: 280px;
         height: 100vh;
         margin-left: 0;
-        border-radius: 0 17px 17px 0;
+        border-radius: 0 24px 24px 0;
         transform: translateX(-100%);
         z-index: 1000;
         overflow-y: auto;
@@ -226,7 +233,7 @@
     }
     
     .sidebar-header {
-        margin-bottom: 10px;
+        margin-bottom: 20px;
     }
     
     .sidebar-close {
