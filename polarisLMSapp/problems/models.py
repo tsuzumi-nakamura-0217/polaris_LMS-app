@@ -16,8 +16,8 @@ class Subject(models.Model):
         return self.subject_name
 
 
-# 問題-カテゴリ（単元）テーブル
-class ProblemCategory(models.Model):
+# 科目-カテゴリ（単元）テーブル
+class SubjectCategory(models.Model):
     subject = models.ForeignKey(
         Subject,
         on_delete=models.CASCADE,
@@ -31,8 +31,8 @@ class ProblemCategory(models.Model):
 
     class Meta:
         ordering = ['subject', 'grade', 'display_order']
-        verbose_name = '問題-カテゴリ(単元)'
-        verbose_name_plural = '問題-カテゴリ(単元)'
+        verbose_name = '科目-カテゴリ(単元)'
+        verbose_name_plural = '科目-カテゴリ(単元)'
 
     def __str__(self):
         return f'{self.subject.subject_name} / {self.title}（{self.grade}年）'
@@ -46,7 +46,7 @@ class Problem(models.Model):
     ]
 
     category = models.ForeignKey(
-        ProblemCategory,
+        SubjectCategory,
         on_delete=models.CASCADE,
         related_name='problems',
         verbose_name='カテゴリ'
