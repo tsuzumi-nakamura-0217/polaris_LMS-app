@@ -7,11 +7,11 @@
     flex: 1;
     min-width: 0; /* flexアイテムが親をはみ出さないようにする */
     padding: 40px 50px;
-    background: white;
+    background: var(--color-surface, #ffffff);
     margin: 20px;
-    border-radius: 20px;
+    border-radius: var(--border-radius-lg, 24px);
     overflow-y: auto;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-default, 0 4px 24px rgba(0, 0, 0, 0.04));
     box-sizing: border-box;
 }
 
