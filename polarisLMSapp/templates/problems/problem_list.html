@@ -41,7 +41,7 @@
             </thead>
             <tbody>
                 {% for problem in problems %}
-                <tr class="problem-row" onclick="window.location='#'">
+                <tr class="problem-row" onclick="window.location='{% url 'problems:problem_detail' problem.pk %}'">
                     <td class="col-subject">
                         <span class="subject-badge">{{ problem.category.subject.subject_name }}</span>
                     </td>

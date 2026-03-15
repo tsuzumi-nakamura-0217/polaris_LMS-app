@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Problem, Subject, SubjectCategory
 
@@ -23,3 +23,36 @@ def problem_list(request):
         'selected_grade': int(grade) if grade else None,
     }
     return render(request, 'problems/problem_list.html', context)
+
+@login_required
+def problem_detail(request, pk):
+    """問題詳細画面"""
+    problem = get_object_or_404(
+        Problem.objects.select_related('category', 'category__subject'),
+        pk=pk,
+        is_active=True,
+    )
+    choices = problem.choices.all() if problem.problem_type == 'choice' else None
+
+    context = {
+        'problem': problem,
+        'choices': choices,
+    }
+    return render(request, 'problems/problem_detail.html', context)
+
+
+@login_required
+def problem_answer(request, pk):
+    """解答確認画面"""
+    problem = get_object_or_404(
+        Problem.objects.select_related('category', 'category__subject'),
+        pk=pk,
+        is_active=True,
+    )
+    correct_choices = problem.choices.filter(is_correct=True) if problem.problem_type == 'choice' else None
+
+    context = {
+        'problem': problem,
+        'correct_choices': correct_choices,
+    }
+    return render(request, 'problems/problem_answer.html', context)

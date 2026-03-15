@@ -1,0 +1,230 @@
+.problem-stage {
+    flex: 1;
+    min-width: 0;
+    padding: 12px;
+    display: flex;
+}
+
+.problem-shell {
+    width: 100%;
+    background: #c7d2e4;
+    border-radius: 16px;
+    padding: 18px 22px 12px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 24px);
+}
+
+.problem-headline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.problem-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.problem-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #f8df67 0%, #f1ca2e 70%);
+    box-shadow: 0 0 0 4px rgba(248, 223, 103, 0.25);
+    flex-shrink: 0;
+}
+
+.problem-title {
+    margin: 0;
+    font-size: 46px;
+    line-height: 1.2;
+    color: #2f3238;
+    letter-spacing: 0.02em;
+}
+
+.problem-meta {
+    margin: 0;
+    font-size: 24px;
+    color: #383a3f;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.problem-body {
+    flex: 1;
+    background: #ececec;
+    border-radius: 18px;
+    padding: 26px;
+    overflow-y: auto;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-sizing: border-box;
+}
+
+.problem-statement {
+    margin: 0;
+    color: #2b2d31;
+    font-size: 26px;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.choice-list {
+    list-style: none;
+    margin: 30px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+}
+
+.choice-item {
+    background: #f8f8f8;
+    border: 1px solid #d9d9d9;
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.choice-label {
+    min-width: 2.1em;
+    color: #2b5b9e;
+    font-weight: 700;
+}
+
+.choice-text {
+    color: #3d3f45;
+    line-height: 1.6;
+}
+
+.problem-actions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.left-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 22px;
+    border-radius: 999px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.action-btn:hover {
+    transform: translateY(-1px);
+}
+
+.action-btn-home,
+.action-btn-list {
+    background: linear-gradient(180deg, #2ad829 0%, #18ba17 100%);
+    box-shadow: 0 4px 10px rgba(24, 186, 23, 0.35);
+}
+
+.action-btn-answer {
+    background: linear-gradient(180deg, #ff7568 0%, #f04e45 100%);
+    box-shadow: 0 4px 10px rgba(240, 78, 69, 0.35);
+    min-width: 220px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+@media (max-width: 1280px) {
+    .problem-title {
+        font-size: 36px;
+    }
+
+    .problem-meta {
+        font-size: 20px;
+    }
+
+    .problem-statement {
+        font-size: 22px;
+    }
+
+    .action-btn {
+        font-size: 26px;
+        padding: 11px 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .problem-stage {
+        padding: 10px;
+        margin-top: 68px;
+    }
+
+    .problem-shell {
+        min-height: calc(100vh - 78px);
+        padding: 14px;
+    }
+
+    .problem-headline {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .problem-title {
+        font-size: 28px;
+    }
+
+    .problem-meta {
+        font-size: 18px;
+    }
+
+    .problem-body {
+        padding: 18px;
+    }
+
+    .problem-statement {
+        font-size: 18px;
+    }
+
+    .problem-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .left-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .action-btn {
+        width: 100%;
+        font-size: 22px;
+        padding: 13px 16px;
+    }
+
+    .action-btn-answer {
+        min-width: 0;
+    }
+}
