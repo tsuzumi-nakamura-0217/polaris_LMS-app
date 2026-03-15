@@ -43,6 +43,11 @@
                 <a href="{% url 'problems:problem_list' %}" class="action-btn action-btn-list">
                     <span>問題一覧</span>
                 </a>
+                {% if request.user.user_type == 'admin' %}
+                <a href="{% url 'problems:problem_edit' problem.pk %}" class="action-btn action-btn-list">
+                    <span>編集</span>
+                </a>
+                {% endif %}
             </div>
             <a href="{% url 'problems:problem_answer' problem.pk %}" class="action-btn action-btn-answer">
                 <span>解答確認</span>

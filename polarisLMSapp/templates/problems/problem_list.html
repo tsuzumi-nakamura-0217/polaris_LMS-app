@@ -11,6 +11,12 @@
 <main class="problem-list-container">
     <h1 class="page-title">問題一覧</h1>
 
+    {% if request.user.user_type == 'admin' %}
+    <div class="filter-section">
+        <a href="{% url 'problems:problem_create' %}" class="filter-btn">問題を作成</a>
+    </div>
+    {% endif %}
+
     <!-- フィルタフォーム -->
     <div class="filter-section">
         <form method="get" class="filter-form">
