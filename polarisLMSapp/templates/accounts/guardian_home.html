@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}担当生徒の選択 - 学びのポラリス{% endblock %}
+
+{% block nav_home %}active{% endblock %}
+
+{% block content %}
+<main class="main-content" style="padding: 2rem;">
+    <header class="page-header" style="margin-bottom: 2rem;">
+        <h1 class="greeting">{{ user.user_name }}さん、こんにちは！</h1>
+        <p style="color: var(--color-gray-500); margin-top: 0.5rem;">確認したい生徒を選択してください。</p>
+    </header>
+
+    {% if student_data %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+        {% for data in student_data %}
+        <a href="{% url 'accounts:student_detail_dashboard' data.student.id %}" style="text-decoration: none; color: inherit; display: block;">
+            <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--color-gray-200); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;">
+                <h2 style="font-size: 1.25rem; color: var(--color-gray-900); margin-bottom: 1rem;">{{ data.student.user_name }} さん</h2>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; color: var(--color-gray-600); font-size: 0.875rem;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>総回答数</span>
+                        <span style="font-weight: 500;">{{ data.total_answers }}問</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>未完了タスク</span>
+                        <span style="font-weight: 500; color: {% if data.tasks_count > 0 %}var(--color-danger, #ef4444){% else %}inherit{% endif %};">{{ data.tasks_count }}件</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="background: white; border-radius: 12px; padding: 3rem; text-align: center; color: var(--color-gray-500);">
+        <svg style="width: 48px; height: 48px; margin: 0 auto 1rem; color: var(--color-gray-400);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        <p>担当されているお子様は現在登録されていません。</p>
+    </div>
+    {% endif %}
+</main>
+{% endblock %}

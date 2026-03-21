@@ -1,7 +1,7 @@
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import SignUpForm
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -75,6 +75,7 @@ from schedules.models import Schedule
 from histories.models import History
 from django.utils import timezone
 from django.db.models import Q
+from .models import GuardianStudent, StaffStudent, User
 
 @login_required
 @user_type_required('student')
@@ -108,19 +109,112 @@ def student_home(request):
     return render(request, 'accounts/student_home.html', context)
 
 @login_required
+def student_detail_dashboard(request, student_id):
+    target_student = get_object_or_404(User, pk=student_id, user_type='student')
+    
+    user = request.user
+    if user.user_type == 'student':
+        if user.id != target_student.id:
+            raise PermissionDenied
+    elif user.user_type == 'guardian':
+        if not GuardianStudent.objects.filter(guardian=user, student=target_student).exists():
+            raise PermissionDenied
+    elif user.user_type == 'staff':
+        if not StaffStudent.objects.filter(staff=user, student=target_student, is_active=True).exists():
+            raise PermissionDenied
+            
+    today = timezone.now().date()
+    
+    today_schedules = Schedule.objects.filter(
+        Q(student=target_student) & 
+        (Q(scheduled_date=today) | Q(scheduled_date__lt=today, status__status__in=['未着手', '進行中']))
+    ).exclude(status__status='完了').select_related('problem', 'status').order_by('scheduled_date', 'status__display_order')
+
+    recent_histories = History.objects.filter(
+        student=target_student
+    ).select_related('problem').order_by('-created_at')[:5]
+
+    total_answers = History.objects.filter(student=target_student).count()
+
+    context = {
+        'target_student': target_student,
+        'today': today,
+        'today_schedules': today_schedules,
+        'recent_histories': recent_histories,
+        'total_answers': total_answers,
+        'total_login_days': 10,
+        'consecutive_login_days': 3,
+        'tasks_count': today_schedules.exclude(status__status='完了').count(),
+    }
+    return render(request, 'accounts/student_detail_dashboard.html', context)
+
+@login_required
 @user_type_required('guardian')
 def guardian_home(request):
-    return render(request, 'accounts/guardian_home.html')
+    today = timezone.now().date()
+    students = [rel.student for rel in GuardianStudent.objects.filter(guardian=request.user).select_related('student')]
+    
+    student_data = []
+    for student in students:
+        tasks_count = Schedule.objects.filter(
+            Q(student=student) & 
+            (Q(scheduled_date=today) | Q(scheduled_date__lt=today, status__status__in=['未着手', '進行中']))
+        ).exclude(status__status='完了').count()
+
+        student_data.append({
+            'student': student,
+            'tasks_count': tasks_count,
+            'total_answers': History.objects.filter(student=student).count(),
+        })
+
+    context = {'student_data': student_data}
+    return render(request, 'accounts/guardian_home.html', context)
 
 @login_required     
 @user_type_required('staff')
 def staff_home(request):
-    return render(request, 'accounts/staff_home.html')
+    today = timezone.now().date()
+    students = [rel.student for rel in StaffStudent.objects.filter(staff=request.user, is_active=True).select_related('student')]
+    
+    student_data = []
+    for student in students:
+        tasks_count = Schedule.objects.filter(
+            Q(student=student) & 
+            (Q(scheduled_date=today) | Q(scheduled_date__lt=today, status__status__in=['未着手', '進行中']))
+        ).exclude(status__status='完了').count()
+
+        student_data.append({
+            'student': student,
+            'tasks_count': tasks_count,
+            'total_answers': History.objects.filter(student=student).count(),
+        })
+
+    context = {'student_data': student_data}
+    return render(request, 'accounts/staff_home.html', context)
 
 @login_required
 @user_type_required('admin')
 def admin_home(request):
-    return render(request, 'accounts/admin_home.html')
+    today = timezone.now().date()
+    
+    total_students = User.objects.filter(user_type='student', is_active=True).count()
+    total_staff = User.objects.filter(user_type__in=['staff', 'guardian', 'admin'], is_active=True).count()
+    total_answers_today = History.objects.filter(created_at__date=today).count()
+    total_active_tasks = Schedule.objects.filter(status__status__in=['未着手', '進行中']).count()
+    
+    recent_histories = History.objects.select_related('student', 'problem').order_by('-created_at')[:10]
+
+    all_students = User.objects.filter(user_type='student', is_active=True).order_by('-created_at')
+
+    context = {
+        'total_students': total_students,
+        'total_staff': total_staff,
+        'total_answers_today': total_answers_today,
+        'total_active_tasks': total_active_tasks,
+        'recent_histories': recent_histories,
+        'all_students': all_students,
+    }
+    return render(request, 'accounts/admin_home.html', context)
 
 # ログアウト
 class CustomLogoutView(LogoutView):
