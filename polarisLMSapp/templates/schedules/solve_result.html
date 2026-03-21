@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}解答結果{% endblock %}
+{% block nav_schedules %}active{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'schedules/css/solve.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="solve-container">
+    <!-- 結果ヘッダー -->
+    <div class="result-header {% if is_correct %}result-correct{% else %}result-wrong{% endif %}">
+        {% if is_correct %}
+        <div class="result-icon">○</div>
+        <h1 class="result-title">正解！</h1>
+        {% else %}
+        <div class="result-icon">×</div>
+        <h1 class="result-title">不正解</h1>
+        {% endif %}
+    </div>
+
+    <!-- 詳細情報 -->
+    <div class="result-details">
+        <div class="detail-card">
+            <div class="detail-row">
+                <span class="detail-label">問題</span>
+                <span class="detail-value">{{ problem.problem|truncatechars:60 }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">あなたの解答</span>
+                <span class="detail-value">{{ user_answer }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">正解</span>
+                <span class="detail-value correct-answer">{{ correct_answer }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">理解度</span>
+                <span class="detail-value">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= level %}★{% else %}☆{% endif %}
+                    {% endfor %}
+                </span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">所要時間</span>
+                <span class="detail-value">{{ duration }}秒</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- アクション -->
+    <div class="result-actions">
+        <a href="{% url 'schedules:solve_problem' schedule_pk %}" class="action-btn-resolve">もう一度解く</a>
+        <a href="{% url 'schedules:schedule_list' %}" class="action-btn-primary">スケジュール一覧に戻る</a>
+        <a href="{% url 'histories:history_list' %}" class="action-btn-secondary">学習履歴を見る</a>
+    </div>
+</main>
+{% endblock %}

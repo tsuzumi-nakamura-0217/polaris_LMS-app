@@ -47,9 +47,10 @@
             </div>
             <div class="card-footer">
                 {% if schedule.status.status != '完了' %}
-                <a href="#" class="solve-btn">問題を解く</a>
+                <a href="{% url 'schedules:solve_problem' schedule.pk %}" class="solve-btn">問題を解く</a>
                 {% else %}
                 <span class="completed-label">完了済み ✔</span>
+                <a href="{% url 'schedules:solve_problem' schedule.pk %}" class="resolve-btn">もう一度解く</a>
                 {% endif %}
             </div>
         </div>
