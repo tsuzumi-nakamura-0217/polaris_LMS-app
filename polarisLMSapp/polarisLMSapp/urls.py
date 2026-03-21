@@ -21,5 +21,6 @@ from polarisLMSapp import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
-    path('problems/', include('problems.urls'))
+    path('problems/', include('problems.urls')),
+    path('schedules/', include('schedules.urls'))   
 ]
