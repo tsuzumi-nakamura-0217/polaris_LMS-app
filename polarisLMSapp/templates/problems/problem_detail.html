@@ -48,6 +48,11 @@
                     <span>編集</span>
                 </a>
                 {% endif %}
+                {% if request.user.user_type == 'staff' or request.user.user_type == 'admin' %}
+                <a href="{% url 'schedules:schedule_create' %}?problem_id={{ problem.pk }}" class="action-btn action-btn-schedule">
+                    <span>スケジュールに追加</span>
+                </a>
+                {% endif %}
             </div>
             <a href="{% url 'problems:problem_answer' problem.pk %}" class="action-btn action-btn-answer">
                 <span>解答確認</span>

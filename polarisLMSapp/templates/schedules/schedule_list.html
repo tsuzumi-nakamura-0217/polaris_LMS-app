@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'schedules/css/schedule_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="schedule-list-container">
+    <h1 class="page-title">{{ page_title }}</h1>
+
+    <!-- 作成ボタン（スタッフ・管理者のみ） -->
+    {% if request.user.user_type == 'staff' or request.user.user_type == 'admin' %}
+    <div class="action-section">
+        <a href="{% url 'schedules:schedule_create' %}" class="create-btn">＋ 新規作成</a>
+    </div>
+    {% endif %}
+
+    <!-- 切り替えタブ -->
+    <div class="tab-section">
+        <a href="{% url 'schedules:schedule_list' %}"
+           class="tab-btn {% if not is_today_view %}tab-active{% endif %}">すべて</a>
+        <a href="{% url 'schedules:today_schedule' %}"
+           class="tab-btn {% if is_today_view %}tab-active{% endif %}">今日</a>
+    </div>
+
+    <!-- スケジュールカードリスト -->
+    <div class="schedule-cards">
+        {% for schedule in schedules %}
+        <div class="schedule-card">
+            <div class="card-header">
+                <span class="scheduled-date">{{ schedule.scheduled_date|date:"n/j (D)" }}</span>
+                <span class="status-badge
+                    {% if schedule.status.status == '未着手' %}status-not-started
+                    {% elif schedule.status.status == '進行中' %}status-in-progress
+                    {% elif schedule.status.status == '完了' %}status-completed
+                    {% endif %}">
+                    {{ schedule.status }}
+                </span>
+            </div>
+            <div class="card-body">
+                <span class="subject-badge">{{ schedule.problem.category.subject.subject_name }}</span>
+                <p class="problem-name">{{ schedule.problem.problem|truncatechars:60 }}</p>
+                <p class="category-name">{{ schedule.problem.category.title }}</p>
+            </div>
+            <div class="card-footer">
+                {% if schedule.status.status != '完了' %}
+                <a href="#" class="solve-btn">問題を解く</a>
+                {% else %}
+                <span class="completed-label">完了済み ✔</span>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" stroke-width="2"/>
+                <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" stroke-width="2"/>
+                <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            {% if is_today_view %}
+            <p>今日のスケジュールはありません</p>
+            <p class="empty-subtitle">新しいスケジュールを作成してみましょう</p>
+            {% else %}
+            <p>スケジュールが見つかりません</p>
+            <p class="empty-subtitle">Admin画面からスケジュールを作成してください</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</main>
+{% endblock %}

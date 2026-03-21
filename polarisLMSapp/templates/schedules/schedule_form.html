@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'schedules/css/schedule_form.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="schedule-form-container">
+    <h1 class="page-title">{{ page_title }}</h1>
+
+    <form method="post" class="schedule-form">
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <div class="form-errors">
+            <p>入力内容にエラーがあります。確認してください。</p>
+            {{ form.errors }}
+        </div>
+        {% endif %}
+
+        <div class="form-group">
+            <label for="{{ form.student.id_for_label }}" class="form-label">生徒</label>
+            {{ form.student }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.problem.id_for_label }}" class="form-label">問題</label>
+            {{ form.problem }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.scheduled_date.id_for_label }}" class="form-label">予定日</label>
+            {{ form.scheduled_date }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.memo.id_for_label }}" class="form-label">メモ（任意）</label>
+            {{ form.memo }}
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'schedules:schedule_list' %}" class="cancel-btn">キャンセル</a>
+            <button type="submit" class="submit-btn">スケジュールを作成</button>
+        </div>
+    </form>
+</main>
+{% endblock %}
