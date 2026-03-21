@@ -153,6 +153,14 @@ def solve_problem(request, pk):
         schedule.status = completed
         schedule.save()
 
+        # 次の未完了のスケジュールを探す（今日 または 過去の未完了）
+        from django.db.models import Q
+        today_date = timezone.now().date()
+        next_schedule = Schedule.objects.filter(
+            Q(student=request.user) & 
+            (Q(scheduled_date=today_date) | Q(scheduled_date__lt=today_date, status__status__in=['未着手', '進行中']))
+        ).exclude(id=schedule.id).exclude(status__status='完了').order_by('scheduled_date', 'status__display_order').first()
+
         # 結果画面へ
         context = {
             'schedule_pk': pk,
@@ -164,5 +172,6 @@ def solve_problem(request, pk):
             'correct_answer': problem.answer if problem.problem_type == 'text' else ', '.join(
                 c.choice_text for c in problem.choices.filter(is_correct=True)
             ),
+            'next_schedule': next_schedule,
         }
         return render(request, 'schedules/solve_result.html', context)

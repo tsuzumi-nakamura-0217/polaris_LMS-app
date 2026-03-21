@@ -66,6 +66,33 @@
                     </div>
                 </div>
             </section>
+            <!-- 最近の学習記録セクション -->
+            <section class="recent-history-section" style="margin-top: 2rem;">
+                <div class="section-header">
+                    <h2 class="section-title">最近の学習記録</h2>
+                </div>
+                <div class="history-scroll-container">
+                    {% for history in recent_histories %}
+                    <div class="history-card">
+                        <div class="history-meta">
+                            <span class="history-date">{{ history.created_at|date:"n/j H:i" }}</span>
+                            {% if history.is_correct %}
+                            <span class="history-result correct">正解</span>
+                            {% else %}
+                            <span class="history-result wrong">不正解</span>
+                            {% endif %}
+                        </div>
+                        <h3 class="history-problem-title">{{ history.problem.problem|truncatechars:30 }}</h3>
+                        <div class="history-details">
+                            <span class="history-level">理解度: {% for i in "12345" %}{% if forloop.counter <= history.level %}★{% else %}☆{% endif %}{% endfor %}</span>
+                            <span class="history-duration">時間: {{ history.duration_seconds }}秒</span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="empty-state">最近の学習記録はありません。</p>
+                    {% endfor %}
+                </div>
+            </section>
         </main>
 
         <!-- 今日やることサイドバー -->
@@ -83,61 +110,32 @@
             </div>
 
             <div class="tasks-list" id="tasksList">
-                <!-- タスクカードはJavaScriptで生成またはDjangoテンプレートで繰り返し -->
-                {% for task in tasks %}
-                <div class="task-card">
-                    <h3 class="task-title">{{ task.title }}</h3>
-                    <div class="task-meta">
-                        <span class="task-date">{{ task.date }}</span>
-                        <span class="task-subject">{{ task.subject }}</span>
-                        <span class="task-grade">{{ task.grade }}</span>
+                {% for schedule in today_schedules %}
+                <a href="{% if schedule.status.status != '完了' %}{% url 'schedules:solve_problem' schedule.pk %}{% else %}#{% endif %}" class="task-card-link" style="text-decoration: none; color: inherit; display: block;">
+                    <div class="task-card {% if schedule.status.status == '完了' %}task-completed{% endif %}">
+                        <h3 class="task-title">{{ schedule.problem.problem|truncatechars:20 }}</h3>
+                        <div class="task-meta">
+                            {% if schedule.scheduled_date < today and schedule.status.status != '完了' %}
+                            <span class="task-overdue-badge" style="color: #ff3b30; font-weight: bold; font-size: 10px; margin-right: 4px;">期限切れ</span>
+                            {% endif %}
+                            <span class="task-subject">{{ schedule.problem.category.subject.subject_name }}</span>
+                            <span class="task-grade">{{ schedule.problem.category.title }}</span>
+                            {% if schedule.status.status == '完了' %}
+                            <span class="task-status-badge completed">完了</span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- チェックボックスは表示のみ（クリック不可） -->
+                        <div class="task-checkbox {% if schedule.status.status == '完了' %}checked{% endif %}" style="pointer-events: none;">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {% if schedule.status.status == '完了' %}stroke="white"{% else %}stroke="currentColor"{% endif %}>
+                                <polyline points="20 6 9 17 4 12" stroke-width="2"/>
+                            </svg>
+                        </div>
                     </div>
-                    <button class="task-checkbox" data-task-id="{{ task.id }}">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </button>
-                </div>
+                </a>
                 {% empty %}
-                <!-- デモ用のカード -->
-                <div class="task-card">
-                    <h3 class="task-title">{{タイトル}}</h3>
-                    <div class="task-meta">
-                        <span class="task-date">{{日付}}</span>
-                        <span class="task-subject">{{科目}}</span>
-                        <span class="task-grade">{{学年}}</span>
-                    </div>
-                    <button class="task-checkbox">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </button>
-                </div>
-                <div class="task-card">
-                    <h3 class="task-title">{{タイトル}}</h3>
-                    <div class="task-meta">
-                        <span class="task-date">{{日付}}</span>
-                        <span class="task-subject">{{科目}}</span>
-                        <span class="task-grade">{{学年}}</span>
-                    </div>
-                    <button class="task-checkbox">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </button>
-                </div>
-                <div class="task-card">
-                    <h3 class="task-title">{{タイトル}}</h3>
-                    <div class="task-meta">
-                        <span class="task-date">{{日付}}</span>
-                        <span class="task-subject">{{科目}}</span>
-                        <span class="task-grade">{{学年}}</span>
-                    </div>
-                    <button class="task-checkbox">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </button>
+                <div class="task-empty">
+                    <p>予定されている問題はありません。<br>ゆっくり休みましょう！</p>
                 </div>
                 {% endfor %}
             </div>

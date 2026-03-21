@@ -396,18 +396,157 @@ body {
     transition: opacity 0.2s;
 }
 
-.task-card.completed .task-checkbox {
+.task-card.completed .task-checkbox,
+.task-checkbox.checked {
     background: var(--color-primary, #2b5b9e);
     border-color: var(--color-primary, #2b5b9e);
+    cursor: default;
 }
 
-.task-card.completed .task-checkbox svg {
+.task-card.completed .task-checkbox svg,
+.task-checkbox.checked svg {
     opacity: 1;
 }
 
-.task-card.completed .task-title {
+.task-checkbox-link {
+    /* Link wrappers for checkbox need no visual change */
+    text-decoration: none;
+    display: contents;
+}
+
+.task-card.completed .task-title,
+.task-card.task-completed .task-title {
     text-decoration: line-through;
     color: var(--color-text-secondary, #86868b);
+}
+
+.task-status-badge {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
+    margin-left: auto;
+}
+
+.task-status-badge.completed {
+    background-color: #248a3d;
+    color: white;
+}
+
+.task-empty {
+    text-align: center;
+    padding: 30px 10px;
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* ===== 最近の学習記録セクション ===== */
+.recent-history-section {
+    margin-top: 40px;
+}
+
+.history-scroll-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    padding-bottom: 16px;
+    -webkit-overflow-scrolling: touch; /* iOSでのスムーズスクロール */
+}
+
+/* スクロールバーのカスタマイズ（横向き） */
+.history-scroll-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.history-scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.history-scroll-container::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.history-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #bbb;
+}
+
+.history-card {
+    flex: 0 0 260px; /* カードの幅を固定 */
+    background: var(--color-surface, #ffffff);
+    border: 1px solid var(--color-border, rgba(0,0,0,0.1));
+    border-radius: var(--border-radius-md, 14px);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.04));
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.history-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-default, 0 4px 12px rgba(0, 0, 0, 0.08));
+}
+
+.history-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+}
+
+.history-date {
+    color: var(--color-text-secondary, #86868b);
+}
+
+.history-result {
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.history-result.correct {
+    color: #248a3d;
+    background-color: rgba(52, 199, 89, 0.1);
+}
+
+.history-result.wrong {
+    color: #ff3b30;
+    background-color: rgba(255, 59, 48, 0.1);
+}
+
+.history-problem-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text-primary, #1d1d1f);
+    margin: 4px 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.history-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-top: auto;
+}
+
+.history-level {
+    color: #ffcc00; /* 星の色 */
+}
+
+.empty-state {
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    padding: 20px 0;
 }
 
 /* ===== レスポンシブ対応 ===== */

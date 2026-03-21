@@ -71,10 +71,41 @@ class CustomLoginView(LoginView):
             return reverse_lazy('accounts:admin_home')    # 管理者用ページへ
 
 # 各ホームページビュー
+from schedules.models import Schedule
+from histories.models import History
+from django.utils import timezone
+from django.db.models import Q
+
 @login_required
 @user_type_required('student')
 def student_home(request):
-    return render(request, 'accounts/student_home.html')
+    today = timezone.now().date()
+    
+    # 今日のスケジュール（過去の未完了 + 今日のすべて）から完了済みを除外
+    today_schedules = Schedule.objects.filter(
+        Q(student=request.user) & 
+        (Q(scheduled_date=today) | Q(scheduled_date__lt=today, status__status__in=['未着手', '進行中']))
+    ).exclude(status__status='完了').select_related('problem', 'status').order_by('scheduled_date', 'status__display_order')
+
+    # 最近の学習履歴
+    recent_histories = History.objects.filter(
+        student=request.user
+    ).select_related('problem').order_by('-created_at')[:5]
+
+    # 総問題回答数
+    total_answers = History.objects.filter(student=request.user).count()
+
+    context = {
+        'today': today,
+        'today_schedules': today_schedules,
+        'recent_histories': recent_histories,
+        'total_answers': total_answers,
+        # デモ用のダミーデータ（必要に応じて後で実際のロジックに置き換え）
+        'total_login_days': 10,
+        'consecutive_login_days': 3,
+        'tasks_count': today_schedules.exclude(status__status='完了').count(),
+    }
+    return render(request, 'accounts/student_home.html', context)
 
 @login_required
 @user_type_required('guardian')

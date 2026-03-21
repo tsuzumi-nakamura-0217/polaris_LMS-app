@@ -52,10 +52,25 @@
     </div>
 
     <!-- アクション -->
-    <div class="result-actions">
-        <a href="{% url 'schedules:solve_problem' schedule_pk %}" class="action-btn-resolve">もう一度解く</a>
-        <a href="{% url 'schedules:schedule_list' %}" class="action-btn-primary">スケジュール一覧に戻る</a>
-        <a href="{% url 'histories:history_list' %}" class="action-btn-secondary">学習履歴を見る</a>
+    <div class="result-actions" style="margin-top: 10px;">
+        <!-- トータルのナビゲーション -->
+        <div style="width: 100%; display: flex; flex-direction: column; gap: 12px; align-items: center;">
+            {% if next_schedule %}
+            <a href="{% url 'schedules:solve_problem' next_schedule.pk %}" class="action-btn-primary" style="width: 100%; max-width: 400px; text-align: center; box-sizing: border-box; padding: 18px 24px;">
+                ▶ 次の問題を解く ({{ next_schedule.problem.problem|truncatechars:15 }})
+            </a>
+            {% else %}
+            <div style="width: 100%; max-width: 400px; text-align: center; padding: 18px 24px; background-color: rgba(52, 199, 89, 0.1); color: #248a3d; border-radius: var(--border-radius-lg); font-weight: bold;">
+                🎉 今日の予定はすべて完了しました！
+            </div>
+            {% endif %}
+
+            <div style="display: flex; gap: 12px; width: 100%; max-width: 400px; justify-content: center; flex-wrap: wrap; margin-top: 10px;">
+                <a href="{% url 'schedules:solve_problem' schedule_pk %}" class="action-btn-resolve">もう一度解く</a>
+                <a href="{% if user.user_type == 'student' %}{% url 'accounts:student_home' %}{% else %}{% url 'schedules:schedule_list' %}{% endif %}" class="action-btn-secondary">ホームへ</a>
+                <a href="{% url 'schedules:schedule_list' %}" class="action-btn-secondary">一覧へ</a>
+            </div>
+        </div>
     </div>
 </main>
 {% endblock %}
