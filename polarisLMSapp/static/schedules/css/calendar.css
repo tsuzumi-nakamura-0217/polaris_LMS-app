@@ -1,0 +1,211 @@
+/* カレンダーナビゲーション */
+.calendar-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 16px 24px;
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.calendar-nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.calendar-nav-btn:hover {
+    background-color: var(--color-background);
+}
+
+.calendar-nav-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.calendar-month-display {
+    text-align: center;
+}
+
+.calendar-month-display .year-text {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+    display: block;
+}
+
+.calendar-month-display .month-text {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+/* カレンダーテーブル */
+.calendar-wrapper {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.calendar-table th {
+    padding: 16px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    border-bottom: 2px solid var(--color-border);
+    text-align: center;
+    background-color: #f8fafc;
+}
+
+.calendar-table th.sunday {
+    color: #ef4444; /* 赤 */
+}
+
+.calendar-table th.saturday {
+    color: #3b82f6; /* 青 */
+}
+
+.calendar-table td {
+    border-right: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: top;
+    height: 120px;
+    padding: 8px;
+    background-color: var(--color-surface);
+}
+
+.calendar-table td:last-child {
+    border-right: none;
+}
+
+.calendar-table td.different-month {
+    background-color: #f8fafc;
+}
+
+.calendar-table td.today {
+    background-color: #eff6ff; /* 薄い青 */
+}
+
+.day-cell {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.day-number {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: 8px;
+    display: inline-block;
+}
+
+.different-month .day-number {
+    color: var(--color-text-tertiary);
+}
+
+.today .day-number {
+    background-color: var(--color-primary);
+    color: white;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    text-align: center;
+    border-radius: 50%;
+}
+
+.schedule-badges {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.schedule-link {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.schedule-link:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+.status-badge {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.status-not-started {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.status-in-progress {
+    background-color: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+}
+
+.status-completed {
+    background-color: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+.status-overdue {
+    background-color: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.status-other {
+    background-color: #f8fafc;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .calendar-table td {
+        height: 80px;
+        padding: 4px;
+    }
+    
+    .status-badge {
+        font-size: 0.65rem;
+        padding: 1px 4px;
+    }
+    
+    .today .day-number {
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+    }
+}

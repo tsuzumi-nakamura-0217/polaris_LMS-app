@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}カレンダー - 学びのポラリス{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'schedules/css/schedule_list.css' %}">
+<link rel="stylesheet" href="{% static 'schedules/css/calendar.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="schedule-list-container">
+    <h1 class="page-title">カレンダー</h1>
+
+    <!-- 切り替えタブ -->
+    <div class="tab-section">
+        <a href="{% url 'schedules:schedule_list' %}" class="tab-btn">すべて</a>
+        <a href="{% url 'schedules:today_schedule' %}" class="tab-btn">今日</a>
+        <a href="{% url 'schedules:calendar' %}" class="tab-btn tab-active">カレンダー</a>
+    </div>
+
+    <!-- カレンダーナビゲーション -->
+    <div class="calendar-controls">
+        <a href="{% url 'schedules:calendar_month' prev_year prev_month %}" class="calendar-nav-btn">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polyline points="15 18 9 12 15 6" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            前月
+        </a>
+        <div class="calendar-month-display">
+            <span class="year-text">{{ year }}年</span>
+            <span class="month-text">{{ month }}月</span>
+        </div>
+        <a href="{% url 'schedules:calendar_month' next_year next_month %}" class="calendar-nav-btn">
+            翌月
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polyline points="9 18 15 12 9 6" stroke="currentColor" stroke-width="2"/>
+            </svg>
+        </a>
+    </div>
+
+    <!-- カレンダー本体 -->
+    <div class="calendar-wrapper">
+        <table class="calendar-table">
+            <thead>
+                <tr>
+                    <th class="sunday">日</th>
+                    <th>月</th>
+                    <th>火</th>
+                    <th>水</th>
+                    <th>木</th>
+                    <th>金</th>
+                    <th class="saturday">土</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for week in month_data %}
+                <tr>
+                    {% for day in week %}
+                    <td class="{% if not day.is_current_month %}different-month{% endif %} {% if day.is_today %}today{% endif %}">
+                        <div class="day-cell">
+                            <span class="day-number">{{ day.day_number }}</span>
+                            {% if day.schedules_count > 0 %}
+                            <div class="schedule-badges">
+                                <a href="{% url 'schedules:schedule_list' %}?date={{ day.date|date:'Y-m-d' }}" class="schedule-link">
+                                    {% for status in day.display_statuses %}
+                                    <span class="status-badge {{ status.css_class }}">
+                                        {{ status.name }}: {{ status.count }}件
+                                    </span>
+                                    {% endfor %}
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</main>
+{% endblock %}

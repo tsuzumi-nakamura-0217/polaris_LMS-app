@@ -21,9 +21,11 @@
     <!-- 切り替えタブ -->
     <div class="tab-section">
         <a href="{% url 'schedules:schedule_list' %}"
-           class="tab-btn {% if not is_today_view %}tab-active{% endif %}">すべて</a>
+           class="tab-btn {% if not is_today_view and not filter_date %}tab-active{% endif %}">すべて</a>
         <a href="{% url 'schedules:today_schedule' %}"
            class="tab-btn {% if is_today_view %}tab-active{% endif %}">今日</a>
+        <a href="{% url 'schedules:calendar' %}"
+           class="tab-btn">カレンダー</a>
     </div>
 
     <!-- スケジュールカードリスト -->

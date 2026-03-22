@@ -6,6 +6,8 @@ from django.utils import timezone
 from .models import Schedule, Status
 from .forms import ScheduleForm
 from histories.models import History
+import calendar
+from datetime import date, timedelta, datetime
 
 
 @login_required
@@ -13,15 +15,30 @@ def schedule_list(request):
     """スケジュール一覧ビュー"""
     schedules = _get_schedules_for_user(request)
 
+    filter_date_str = request.GET.get('date')
+    filter_date = None
+    if filter_date_str:
+        try:
+            filter_date = datetime.strptime(filter_date_str, '%Y-%m-%d').date()
+            schedules = schedules.filter(scheduled_date=filter_date)
+        except ValueError:
+            pass
+
     # 未完了が先に来るようにソート（完了を後ろに）
     schedules = schedules.select_related(
         'problem', 'problem__category', 'problem__category__subject', 'status', 'student'
     ).order_by('status__display_order', 'scheduled_date')
 
+    if filter_date:
+        page_title = f'{filter_date.strftime("%m/%d")}のスケジュール'
+    else:
+        page_title = 'スケジュール一覧'
+
     context = {
         'schedules': schedules,
         'is_today_view': False,
-        'page_title': 'スケジュール一覧',
+        'page_title': page_title,
+        'filter_date': filter_date_str,
     }
     return render(request, 'schedules/schedule_list.html', context)
 
@@ -175,3 +192,86 @@ def solve_problem(request, pk):
             'next_schedule': next_schedule,
         }
         return render(request, 'schedules/solve_result.html', context)
+
+
+@login_required
+def calendar_view(request, year=None, month=None):
+    """月別カレンダービュー"""
+    today = timezone.now().date()
+    
+    if year is None or month is None:
+        year = today.year
+        month = today.month
+
+    start_date = date(year, month, 1)
+    if month == 12:
+        next_month_start = date(year + 1, 1, 1)
+    else:
+        next_month_start = date(year, month + 1, 1)
+        
+    cal = calendar.Calendar(firstweekday=6)
+    month_days = cal.monthdatescalendar(year, month)
+    
+    cal_start_date = month_days[0][0]
+    cal_end_date = month_days[-1][-1]
+    
+    schedules = _get_schedules_for_user(request).filter(
+        scheduled_date__gte=cal_start_date,
+        scheduled_date__lte=cal_end_date
+    )
+
+    schedules_by_date = {}
+    for schedule in schedules:
+        d = schedule.scheduled_date
+        if d not in schedules_by_date:
+            schedules_by_date[d] = []
+        schedules_by_date[d].append(schedule)
+
+    month_data = []
+    for week in month_days:
+        week_data = []
+        for d in week:
+            day_schedules = schedules_by_date.get(d, [])
+            
+            display_statuses = []
+            if day_schedules:
+                counts = {}
+                for sch in day_schedules:
+                    status_name = sch.status.status
+                    counts[status_name] = counts.get(status_name, 0) + 1
+                
+                for status_name, css_class in [('未着手', 'status-not-started'), ('進行中', 'status-in-progress'), ('完了', 'status-completed')]:
+                    if counts.get(status_name, 0) > 0:
+                        if d < today and status_name in ['未着手', '進行中']:
+                            css_class = 'status-overdue'
+                        display_statuses.append({'name': status_name, 'count': counts[status_name], 'css_class': css_class})
+                
+                for status_name, count in counts.items():
+                    if status_name not in ['未着手', '進行中', '完了']:
+                        display_statuses.append({'name': status_name, 'count': count, 'css_class': 'status-other'})
+
+            week_data.append({
+                'date': d,
+                'day_number': d.day,
+                'is_current_month': d.month == month,
+                'is_today': d == today,
+                'schedules_count': len(day_schedules),
+                'display_statuses': display_statuses,
+                'is_past': d < today
+            })
+        month_data.append(week_data)
+
+    prev_month_date = start_date - timedelta(days=1)
+    
+    context = {
+        'page_title': 'カレンダー',
+        'year': year,
+        'month': month,
+        'month_data': month_data,
+        'today': today,
+        'prev_year': prev_month_date.year,
+        'prev_month': prev_month_date.month,
+        'next_year': next_month_start.year,
+        'next_month': next_month_start.month,
+    }
+    return render(request, 'schedules/calendar.html', context)
