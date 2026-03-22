@@ -14,7 +14,7 @@
     <!-- 作成ボタン（スタッフ・管理者のみ） -->
     {% if request.user.user_type == 'staff' or request.user.user_type == 'admin' %}
     <div class="action-section">
-        <a href="{% url 'schedules:schedule_create' %}" class="create-btn">＋ 新規作成</a>
+        <a href="{% url 'schedules:schedule_batch_create' %}" class="create-btn">＋ 新規作成</a>
     </div>
     {% endif %}
 

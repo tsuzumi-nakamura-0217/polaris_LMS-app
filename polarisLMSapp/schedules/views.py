@@ -8,6 +8,8 @@ from .forms import ScheduleForm
 from histories.models import History
 import calendar
 from datetime import date, timedelta, datetime
+from accounts.models import User
+from problems.models import Problem, Subject
 
 
 @login_required
@@ -275,3 +277,76 @@ def calendar_view(request, year=None, month=None):
         'next_month': next_month_start.month,
     }
     return render(request, 'schedules/calendar.html', context)
+
+
+@login_required
+def schedule_batch_create(request):
+    """スケジュール一括作成・DB表示ビュー（スタッフ・管理者のみ）"""
+    if request.user.user_type not in ('staff', 'admin'):
+        raise PermissionDenied
+
+    # フィルタ用のデータ
+    subjects = Subject.objects.filter(is_active=True).order_by('display_order')
+    # 選択用の生徒リスト
+    students = User.objects.filter(user_type='student', is_active=True).order_by('user_name')
+
+    if request.method == 'POST':
+        student_id = request.POST.get('student_id')
+        if not student_id:
+            messages.error(request, '生徒を選択してください。')
+            return redirect('schedules:schedule_batch_create')
+
+        student = get_object_or_404(User, id=student_id)
+        not_started = Status.objects.get(status='未着手')
+        created_count = 0
+
+        for key, value in request.POST.items():
+            if key.startswith('scheduled_date_') and value:
+                # value is a date string like '2023-10-01'
+                problem_id = key.replace('scheduled_date_', '')
+                try:
+                    problem = Problem.objects.get(id=problem_id, is_active=True)
+                    # Create schedule
+                    Schedule.objects.create(
+                        student=student,
+                        problem=problem,
+                        status=not_started,
+                        scheduled_date=value
+                    )
+                    created_count += 1
+                except (Problem.DoesNotExist, ValueError):
+                    pass
+
+        if created_count > 0:
+            messages.success(request, f'{created_count}件のスケジュールを作成しました。')
+            return redirect('schedules:schedule_list')
+        else:
+            messages.warning(request, '作成されたスケジュールはありませんでした（日付が未入力など）。')
+            return redirect('schedules:schedule_batch_create')
+
+    # GET リクエスト（フィルタ処理）
+    subject_id = request.GET.get('subject_id', '')
+    grade = request.GET.get('grade', '')
+
+    problems = Problem.objects.filter(is_active=True).select_related(
+        'category', 'category__subject'
+    ).order_by('category__subject__display_order', 'category__grade', 'category__display_order', 'display_order')
+
+    if subject_id:
+        problems = problems.filter(category__subject_id=subject_id)
+    if grade:
+        problems = problems.filter(category__grade=grade)
+
+    # 学年の重複のないリスト（フィルタ用オプションとして）
+    grades = Problem.objects.filter(is_active=True).values_list('category__grade', flat=True).distinct().order_by('category__grade')
+
+    context = {
+        'page_title': 'スケジュール一括作成',
+        'problems': problems,
+        'subjects': subjects,
+        'selected_subject': int(subject_id) if subject_id.isdigit() else None,
+        'grades': grades,
+        'selected_grade': int(grade) if grade.isdigit() else None,
+        'students': students,
+    }
+    return render(request, 'schedules/schedule_batch_create.html', context)
