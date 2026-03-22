@@ -33,8 +33,31 @@
                     {% endfor %}
                 </select>
             </div>
+            <div class="filter-group" style="position: relative;">
+                <label for="category_id">カテゴリ:</label>
+                <div style="position: relative;">
+                    <select name="category_id" id="category_id" class="form-input" disabled>
+                        <option value="">すべて</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}" data-subject="{{ cat.subject.id }}" data-grade="{{ cat.grade }}" {% if selected_category == cat.id %}selected{% endif %}>{{ cat.title }}</option>
+                        {% endfor %}
+                    </select>
+                    <div id="category_overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; cursor: pointer;"></div>
+                </div>
+                <span id="category_warning" style="color: var(--color-error, #ff3b30); font-size: 12px; font-weight: bold; display: none; margin-top: 4px; position: absolute; top: 100%; left: 0; white-space: nowrap; z-index: 20;">科目と学年を先に選択してください。</span>
+            </div>
+
+            <div class="filter-group">
+                <label for="sort_by">並び替え:</label>
+                <select name="sort_by" id="sort_by" class="form-input">
+                    <option value="default" {% if selected_sort == 'default' %}selected{% endif %}>デフォルト順</option>
+                    <option value="difficulty_asc" {% if selected_sort == 'difficulty_asc' %}selected{% endif %}>難易度 (易しい順)</option>
+                    <option value="difficulty_desc" {% if selected_sort == 'difficulty_desc' %}selected{% endif %}>難易度 (難しい順)</option>
+                    <option value="category_asc" {% if selected_sort == 'category_asc' %}selected{% endif %}>カテゴリ名順</option>
+                </select>
+            </div>
             
-            <button type="submit" class="btn-filter">絞り込み</button>
+            <button type="submit" class="btn-filter">絞り込み・適用</button>
             <a href="{% url 'schedules:schedule_batch_create' %}" class="btn-clear">クリア</a>
         </form>
     </div>
@@ -42,16 +65,6 @@
     <!-- 一括作成フォーム -->
     <form method="post" action="{% url 'schedules:schedule_batch_create' %}" class="batch-create-form">
         {% csrf_token %}
-        
-        <div class="student-select-section">
-            <label for="student_id" class="form-label required">生徒を選択:</label>
-            <select name="student_id" id="student_id" class="form-input" required>
-                <option value="">-- 生徒を選択してください --</option>
-                {% for student in students %}
-                <option value="{{ student.id }}">{{ student.user_name }}</option>
-                {% endfor %}
-            </select>
-        </div>
 
         <div class="table-container">
             <table class="problem-db-table">
@@ -61,6 +74,8 @@
                         <th class="col-category">カテゴリ</th>
                         <th class="col-problem">問題内容</th>
                         <th class="col-difficulty">難易度</th>
+                        <th class="col-recent-result">直近の結果</th>
+                        <th class="col-recent-level">理解度</th>
                         <th class="col-date">予定日を設定</th>
                     </tr>
                 </thead>
@@ -77,7 +92,23 @@
                             {{ problem.problem|truncatechars:50 }}
                         </td>
                         <td>
-                            {% if problem.difficulty %}★{{ problem.difficulty }}{% else %}-{% endif %}
+                            {% if problem.difficulty %}Lv.{{ problem.difficulty }}{% else %}-{% endif %}
+                        </td>
+                        <td style="text-align: center;">
+                            {% if problem.recent_is_correct is True %}
+                                <span class="status-badge" style="background: rgba(52, 199, 89, 0.12); color: #248a3d; padding: 4px 8px; border-radius: 4px; font-size: 12px; white-space: nowrap; font-weight: 500;">〇 正解</span>
+                            {% elif problem.recent_is_correct is False %}
+                                <span class="status-badge" style="background: rgba(255, 59, 48, 0.12); color: #ff3b30; padding: 4px 8px; border-radius: 4px; font-size: 12px; white-space: nowrap; font-weight: 500;">× 不正解</span>
+                            {% else %}
+                                <span style="color: #a0aec0;">-</span>
+                            {% endif %}
+                        </td>
+                        <td style="text-align: center;">
+                            {% if problem.recent_level %}
+                                <span style="font-weight: bold; color: #4a5568;">★{{ problem.recent_level }}</span>
+                            {% else %}
+                                <span style="color: #a0aec0;">-</span>
+                            {% endif %}
                         </td>
                         <td>
                             <input type="date" name="scheduled_date_{{ problem.id }}" class="form-input date-input">
@@ -85,7 +116,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="5" class="empty-state-row">条件に一致する問題がありません。</td>
+                        <td colspan="7" class="empty-state-row">条件に一致する問題がありません。</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -98,4 +129,8 @@
         </div>
     </form>
 </main>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'schedules/js/schedule_batch_create.js' %}"></script>
 {% endblock %}

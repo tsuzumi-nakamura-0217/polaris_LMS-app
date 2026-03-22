@@ -193,6 +193,18 @@ def staff_home(request):
     return render(request, 'accounts/staff_home.html', context)
 
 @login_required
+@user_type_required('staff')
+def staff_select_student(request, student_id):
+    target_student = get_object_or_404(User, pk=student_id, user_type='student')
+    
+    if not StaffStudent.objects.filter(staff=request.user, student=target_student, is_active=True).exists():
+        raise PermissionDenied
+        
+    request.session['selected_student_id'] = student_id
+    
+    return redirect('accounts:student_detail_dashboard', student_id=student_id)
+
+@login_required
 @user_type_required('admin')
 def admin_home(request):
     today = timezone.now().date()

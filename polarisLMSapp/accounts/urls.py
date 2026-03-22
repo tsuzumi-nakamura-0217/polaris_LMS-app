@@ -11,5 +11,6 @@ urlpatterns = [
     path('student/<int:student_id>/dashboard/', views.student_detail_dashboard, name='student_detail_dashboard'),
     path('guardian_home/', views.guardian_home, name='guardian_home'),
     path('staff_home/', views.staff_home, name='staff_home'),    
+    path('staff/select/<int:student_id>/', views.staff_select_student, name='staff_select_student'),
     path('admin_home/', views.admin_home, name='admin_home'),
 ]

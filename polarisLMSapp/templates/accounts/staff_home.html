@@ -5,6 +5,15 @@
 
 {% block nav_home %}active{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* 生徒選択機能のためサイドバーを非表示にする */
+    #sidebar { display: none !important; }
+    .container { grid-template-columns: 1fr !important; }
+    .mobile-menu-toggle { display: none !important; }
+</style>
+{% endblock %}
+
 {% block content %}
 <main class="main-content" style="padding: 2rem;">
     <header class="page-header" style="margin-bottom: 2rem;">
@@ -15,7 +24,7 @@
     {% if student_data %}
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
         {% for data in student_data %}
-        <a href="{% url 'accounts:student_detail_dashboard' data.student.id %}" style="text-decoration: none; color: inherit; display: block;">
+        <a href="{% url 'accounts:staff_select_student' data.student.id %}" style="text-decoration: none; color: inherit; display: block;">
             <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--color-gray-200); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;">
                 <h2 style="font-size: 1.25rem; color: var(--color-gray-900); margin-bottom: 1rem;">{{ data.student.user_name }} さん</h2>
                 <div style="display: flex; flex-direction: column; gap: 0.5rem; color: var(--color-gray-600); font-size: 0.875rem;">

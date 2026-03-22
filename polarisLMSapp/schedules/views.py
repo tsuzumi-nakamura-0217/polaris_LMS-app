@@ -8,8 +8,9 @@ from .forms import ScheduleForm
 from histories.models import History
 import calendar
 from datetime import date, timedelta, datetime
+from django.db.models import F
 from accounts.models import User
-from problems.models import Problem, Subject
+from problems.models import Problem, Subject, SubjectCategory
 
 
 @login_required
@@ -72,7 +73,7 @@ def _get_schedules_for_user(request):
         return Schedule.objects.filter(student=user)
     else:
         # スタッフ・管理者: 指定した生徒 or 全て
-        student_id = request.GET.get('student_id')
+        student_id = request.GET.get('student_id') or request.session.get('selected_student_id')
         if student_id:
             return Schedule.objects.filter(student_id=student_id)
         return Schedule.objects.all()
@@ -88,6 +89,11 @@ def schedule_create(request):
         form = ScheduleForm(request.POST)
         if form.is_valid():
             schedule = form.save(commit=False)
+            student_id = request.session.get('selected_student_id')
+            if not student_id:
+                messages.error(request, '生徒が選択されていません。')
+                return redirect('schedules:schedule_list')
+            schedule.student_id = student_id
             schedule.status = Status.objects.get(status='未着手')
             schedule.save()
             messages.success(request, 'スケジュールを作成しました。')
@@ -291,9 +297,9 @@ def schedule_batch_create(request):
     students = User.objects.filter(user_type='student', is_active=True).order_by('user_name')
 
     if request.method == 'POST':
-        student_id = request.POST.get('student_id')
+        student_id = request.session.get('selected_student_id')
         if not student_id:
-            messages.error(request, '生徒を選択してください。')
+            messages.error(request, '生徒が選択されていません。')
             return redirect('schedules:schedule_batch_create')
 
         student = get_object_or_404(User, id=student_id)
@@ -327,18 +333,52 @@ def schedule_batch_create(request):
     # GET リクエスト（フィルタ処理）
     subject_id = request.GET.get('subject_id', '')
     grade = request.GET.get('grade', '')
+    category_id = request.GET.get('category_id', '')
+    sort_by = request.GET.get('sort_by', 'default')
 
     problems = Problem.objects.filter(is_active=True).select_related(
         'category', 'category__subject'
-    ).order_by('category__subject__display_order', 'category__grade', 'category__display_order', 'display_order')
+    )
 
     if subject_id:
         problems = problems.filter(category__subject_id=subject_id)
     if grade:
         problems = problems.filter(category__grade=grade)
+    if category_id:
+        problems = problems.filter(category_id=category_id)
+
+    # 並べ替え処理
+    if sort_by == 'difficulty_asc':
+        problems = problems.order_by(F('difficulty').asc(nulls_last=True), 'category__subject__display_order', 'category__grade', 'category__display_order', 'display_order')
+    elif sort_by == 'difficulty_desc':
+        problems = problems.order_by(F('difficulty').desc(nulls_last=True), 'category__subject__display_order', 'category__grade', 'category__display_order', 'display_order')
+    elif sort_by == 'category_asc':
+        problems = problems.order_by('category__title', 'category__grade', 'display_order')
+    else:
+        # デフォルト
+        problems = problems.order_by('category__subject__display_order', 'category__grade', 'category__display_order', 'display_order')
 
     # 学年の重複のないリスト（フィルタ用オプションとして）
     grades = Problem.objects.filter(is_active=True).values_list('category__grade', flat=True).distinct().order_by('category__grade')
+    
+    # カテゴリのリスト（フィルタ用オプションとして）
+    categories = SubjectCategory.objects.filter(is_active=True).select_related('subject').order_by('subject__display_order', 'grade', 'display_order')
+
+    # 生徒が選択されていれば、直近の成績と理解度を取得
+    student_id = request.session.get('selected_student_id')
+    if student_id:
+        from histories.models import History
+        from django.db.models import Subquery, OuterRef
+        
+        latest_history = History.objects.filter(
+            problem=OuterRef('pk'),
+            student_id=student_id
+        ).order_by('-created_at')
+        
+        problems = problems.annotate(
+            recent_is_correct=Subquery(latest_history.values('is_correct')[:1]),
+            recent_level=Subquery(latest_history.values('level')[:1])
+        )
 
     context = {
         'page_title': 'スケジュール一括作成',
@@ -347,6 +387,8 @@ def schedule_batch_create(request):
         'selected_subject': int(subject_id) if subject_id.isdigit() else None,
         'grades': grades,
         'selected_grade': int(grade) if grade.isdigit() else None,
-        'students': students,
+        'categories': categories,
+        'selected_category': int(category_id) if category_id.isdigit() else None,
+        'selected_sort': sort_by,
     }
     return render(request, 'schedules/schedule_batch_create.html', context)

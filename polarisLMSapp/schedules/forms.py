@@ -8,7 +8,7 @@ class ScheduleForm(forms.ModelForm):
 
     class Meta:
         model = Schedule
-        fields = ['student', 'problem', 'scheduled_date', 'memo']
+        fields = ['problem', 'scheduled_date', 'memo']
         widgets = {
             'scheduled_date': forms.DateInput(attrs={
                 'type': 'date',
@@ -22,9 +22,4 @@ class ScheduleForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # 生徒のみ選択できるようにする
-        self.fields['student'].queryset = User.objects.filter(
-            user_type='student', is_active=True
-        )
-        self.fields['student'].widget.attrs.update({'class': 'form-input'})
         self.fields['problem'].widget.attrs.update({'class': 'form-input'})

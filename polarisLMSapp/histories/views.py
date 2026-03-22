@@ -19,12 +19,20 @@ def history_list(request):
         ).values_list('student_id', flat=True)
         histories = History.objects.filter(student_id__in=student_ids)
     elif user.user_type == 'staff':
-        # スタッフ: 担当生徒の履歴
+        # スタッフ: 選択中の生徒または担当生徒の履歴
         from accounts.models import StaffStudent
-        student_ids = StaffStudent.objects.filter(
-            staff=user, is_active=True
-        ).values_list('student_id', flat=True)
-        histories = History.objects.filter(student_id__in=student_ids)
+        selected_student_id = request.session.get('selected_student_id')
+        if selected_student_id:
+            # 選択中の生徒が自分の担当か確認
+            if StaffStudent.objects.filter(staff=user, student_id=selected_student_id, is_active=True).exists():
+                histories = History.objects.filter(student_id=selected_student_id)
+            else:
+                histories = History.objects.none()
+        else:
+            student_ids = StaffStudent.objects.filter(
+                staff=user, is_active=True
+            ).values_list('student_id', flat=True)
+            histories = History.objects.filter(student_id__in=student_ids)
     else:
         # 管理者: 全員の履歴
         histories = History.objects.all()
