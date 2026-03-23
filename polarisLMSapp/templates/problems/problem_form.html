@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if is_edit %}問題編集{% else %}問題作成{% endif %}{% endblock %}
+{% block nav_problems %}active{% endblock %}
+
+{% block content %}
+<main class="problem-stage">
+    <section class="problem-shell">
+        <header class="problem-headline">
+            <h1>{% if is_edit %}問題編集{% else %}問題作成{% endif %}</h1>
+        </header>
+
+        <section class="problem-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <ul>
+                    {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                <div>
+                    <label for="{{ form.category.id_for_label }}">カテゴリ</label>
+                    {{ form.category }}
+                    {% for error in form.category.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ form.problem_type.id_for_label }}">出題形式</label>
+                    {{ form.problem_type }}
+                    {% for error in form.problem_type.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ form.problem.id_for_label }}">問題文</label>
+                    {{ form.problem }}
+                    {% for error in form.problem.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div id="answer-section">
+                    <label for="{{ form.answer.id_for_label }}">正解（記述式）</label>
+                    {{ form.answer }}
+                    {% for error in form.answer.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ form.difficulty.id_for_label }}">難易度</label>
+                    {{ form.difficulty }}
+                    {% for error in form.difficulty.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <section id="choice-section">
+                    <h2>選択肢</h2>
+
+                    {{ formset.management_form }}
+                    {% if formset.non_form_errors %}
+                    <ul>
+                        {% for error in formset.non_form_errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+
+                    {% for choice_form in formset %}
+                    <fieldset>
+                        {{ choice_form.id }}
+                        <div>
+                            <label for="{{ choice_form.choice_label.id_for_label }}">ラベル</label>
+                            {{ choice_form.choice_label }}
+                            {% for error in choice_form.choice_label.errors %}
+                            <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        <div>
+                            <label for="{{ choice_form.choice_text.id_for_label }}">選択肢文</label>
+                            {{ choice_form.choice_text }}
+                            {% for error in choice_form.choice_text.errors %}
+                            <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        <div>
+                            <label for="{{ choice_form.display_order.id_for_label }}">表示順</label>
+                            {{ choice_form.display_order }}
+                            {% for error in choice_form.display_order.errors %}
+                            <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        <div>
+                            <label for="{{ choice_form.is_correct.id_for_label }}">正解</label>
+                            {{ choice_form.is_correct }}
+                        </div>
+                        <div>
+                            <label for="{{ choice_form.DELETE.id_for_label }}">削除</label>
+                            {{ choice_form.DELETE }}
+                        </div>
+                    </fieldset>
+                    {% endfor %}
+                </section>
+
+                <nav class="problem-actions">
+                    <a href="{% if is_edit %}{% url 'problems:problem_detail' problem.pk %}{% else %}{% url 'problems:problem_list' %}{% endif %}" class="action-btn action-btn-list">キャンセル</a>
+                    <button type="submit" class="action-btn action-btn-answer">{% if is_edit %}更新する{% else %}作成する{% endif %}</button>
+                </nav>
+            </form>
+        </section>
+    </section>
+</main>
+
+<script src="{% static 'problems/js/problem_form.js' %}"></script>
+{% endblock %}

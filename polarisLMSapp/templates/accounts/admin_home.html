@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}管理者ホーム - 学びのポラリス{% endblock %}
+
+{% block nav_home %}active{% endblock %}
+
+{% block content %}
+<main class="main-content" style="padding: 2rem;">
+    <header class="page-header" style="margin-bottom: 2rem;">
+        <h1 class="greeting">{{ user.user_name }}さん、こんにちは！</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+            <p style="color: var(--color-gray-500); margin: 0;">システムの利用状況を確認できます。</p>
+            {% if user.is_staff or user.is_superuser %}
+            <a href="{% url 'admin:index' %}" style="display: inline-block; padding: 0.5rem 1rem; background-color: var(--color-primary, #4f46e5); color: white; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 0.875rem;">管理者メニュー (Django Admin) へ</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid var(--color-primary, #4f46e5);">
+            <div style="color: var(--color-gray-500); font-size: 0.875rem; margin-bottom: 0.5rem;">登録生徒数</div>
+            <div style="font-size: 2rem; font-weight: bold; color: var(--color-gray-900);">{{ total_students }}</div>
+        </div>
+        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid #10b981;">
+            <div style="color: var(--color-gray-500); font-size: 0.875rem; margin-bottom: 0.5rem;">登録スタッフ・保護者数</div>
+            <div style="font-size: 2rem; font-weight: bold; color: var(--color-gray-900);">{{ total_staff }}</div>
+        </div>
+        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid #f59e0b;">
+            <div style="color: var(--color-gray-500); font-size: 0.875rem; margin-bottom: 0.5rem;">本日の回答数</div>
+            <div style="font-size: 2rem; font-weight: bold; color: var(--color-gray-900);">{{ total_answers_today }}</div>
+        </div>
+        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid #ef4444;">
+            <div style="color: var(--color-gray-500); font-size: 0.875rem; margin-bottom: 0.5rem;">未完了タスク</div>
+            <div style="font-size: 2rem; font-weight: bold; color: var(--color-gray-900);">{{ total_active_tasks }}</div>
+        </div>
+    </div>
+
+    <!-- 生徒一覧セクション -->
+    <section style="background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;">
+        <h2 style="font-size: 1.5rem; color: var(--color-gray-900); margin-bottom: 1.5rem; border-bottom: 1px solid var(--color-gray-200); padding-bottom: 1rem;">登録生徒一覧</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+            {% for s in all_students %}
+            <a href="{% url 'accounts:student_detail_dashboard' s.id %}" style="text-decoration: none; color: inherit; display: block; background: var(--color-gray-50, #f9fafb); padding: 1rem; border-radius: 8px; border: 1px solid var(--color-gray-200); transition: background-color 0.2s;">
+                <div style="font-weight: 500; color: var(--color-gray-900);">{{ s.user_name }} さん</div>
+                <div style="font-size: 0.75rem; color: var(--color-gray-500); margin-top: 0.25rem;">ダッシュボードを見る →</div>
+            </a>
+            {% empty %}
+            <div style="grid-column: 1 / -1; text-align: center; color: var(--color-gray-500); padding: 2rem;">登録されている生徒はいません。</div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- 最近の学習記録 -->
+    <section style="background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+        <h2 style="font-size: 1.5rem; color: var(--color-gray-900); margin-bottom: 1.5rem; border-bottom: 1px solid var(--color-gray-200); padding-bottom: 1rem;">システムの最近の学習記録</h2>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr style="border-bottom: 2px solid var(--color-gray-200); color: var(--color-gray-500); font-size: 0.875rem;">
+                        <th style="padding: 1rem 0.5rem;">ユーザー</th>
+                        <th style="padding: 1rem 0.5rem;">問題</th>
+                        <th style="padding: 1rem 0.5rem;">科目</th>
+                        <th style="padding: 1rem 0.5rem;">正誤</th>
+                        <th style="padding: 1rem 0.5rem;">日時</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for history in recent_histories %}
+                    <tr style="border-bottom: 1px solid var(--color-gray-100);">
+                        <td style="padding: 1rem 0.5rem; font-weight: 500;">
+                            <a href="{% url 'accounts:student_detail_dashboard' history.student.id %}" style="color: var(--color-primary, #4f46e5); text-decoration: none;">
+                                {{ history.student.user_name }}
+                            </a>
+                        </td>
+                        <td style="padding: 1rem 0.5rem;">{{ history.problem.problem|truncatechars:30 }}</td>
+                        <td style="padding: 1rem 0.5rem; color: var(--color-gray-500); font-size: 0.875rem;">{{ history.problem.category.subject.subject_name }}</td>
+                        <td style="padding: 1rem 0.5rem;">
+                            <span style="font-size: 0.75rem; font-weight: bold; padding: 2px 6px; border-radius: 4px; background: {% if history.is_correct %}#e6f4ea{% else %}#fce8e6{% endif %}; color: {% if history.is_correct %}#137333{% else %}#c5221f{% endif %};">
+                                {% if history.is_correct %}正解{% else %}不正解{% endif %}
+                            </span>
+                        </td>
+                        <td style="padding: 1rem 0.5rem; color: var(--color-gray-500); font-size: 0.875rem;">{{ history.created_at|date:"n/j H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="padding: 2rem; text-align: center; color: var(--color-gray-500);">最近の学習記録はありません。</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+{% endblock %}

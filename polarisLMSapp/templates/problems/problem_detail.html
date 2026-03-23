@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}問題詳細{% endblock %}
+{% block nav_problems %}active{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'problems/css/problem_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="problem-stage">
+    <section class="problem-shell">
+        <header class="problem-headline">
+            <div class="problem-title-wrap">
+                <span class="problem-dot" aria-hidden="true"></span>
+                <h1 class="problem-title">{{ problem.category.title }} | 問題</h1>
+            </div>
+            <p class="problem-meta">{{ problem.category.grade }}年 | {{ problem.category.subject.subject_name }}</p>
+        </header>
+
+        <section class="problem-body" aria-label="問題文">
+            <h2 class="sr-only">問題文</h2>
+            <div class="problem-statement">{{ problem.problem }}</div>
+
+            {% if problem.problem_type == 'choice' and choices %}
+            <ol class="choice-list">
+                {% for choice in choices %}
+                <li class="choice-item">
+                    <span class="choice-label">{{ choice.choice_label }}</span>
+                    <span class="choice-text">{{ choice.choice_text }}</span>
+                </li>
+                {% endfor %}
+            </ol>
+            {% endif %}
+        </section>
+
+        <nav class="problem-actions" aria-label="問題操作">
+            <div class="left-actions">
+                <a href="{% url 'accounts:student_home' %}" class="action-btn action-btn-home">
+                    <span>ホーム</span>
+                </a>
+                <a href="{% url 'problems:problem_list' %}" class="action-btn action-btn-list">
+                    <span>問題一覧</span>
+                </a>
+                {% if request.user.user_type == 'admin' %}
+                <a href="{% url 'problems:problem_edit' problem.pk %}" class="action-btn action-btn-list">
+                    <span>編集</span>
+                </a>
+                {% endif %}
+                {% if request.user.user_type == 'staff' or request.user.user_type == 'admin' %}
+                <a href="{% url 'schedules:schedule_create' %}?problem_id={{ problem.pk }}" class="action-btn action-btn-schedule">
+                    <span>スケジュールに追加</span>
+                </a>
+                {% endif %}
+            </div>
+            <a href="{% url 'problems:problem_answer' problem.pk %}" class="action-btn action-btn-answer">
+                <span>解答確認</span>
+            </a>
+        </nav>
+    </section>
+</main>
+{% endblock %}

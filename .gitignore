@@ -60,3 +60,9 @@ node_modules/
 
 # 問題作成
 問題作成/問題
+
+# すべてのアプリのmigrations内のファイルを無視
+**/migrations/*
+
+# ただし、__init__.py だけは管理対象に含める（フォルダ構造を維持するため）
+!**/migrations/__init__.py

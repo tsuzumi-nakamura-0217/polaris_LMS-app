@@ -12,43 +12,45 @@
     --color-primary-light: rgba(43, 91, 158, 0.1); /* プライマリー薄め（フォーカス時） */
     
     /* アクセントカラー */
-    --color-accent: #1ddb1d;            /* グリーン（リンク、登録ボタン） */
-    --color-accent-dark: #17b317;       /* グリーン暗め（ホバー時） */
+    --color-accent: #34c759;            /* グリーン（リンク、登録ボタン）Apple風のグリーンに変更 */
+    --color-accent-dark: #248a3d;       /* グリーン暗め（ホバー時） */
     
     /* エラー・警告カラー */
-    --color-error: #d32f2f;             /* エラー赤 */
+    --color-error: #ff3b30;             /* エラー赤（Apple風） */
     --color-error-bg: #ffebee;          /* エラー背景 */
     
     /* ニュートラルカラー */
-    --color-text-primary: #444;         /* メインテキスト */
-    --color-text-secondary: #666;       /* サブテキスト、ヘルプテキスト */
-    --color-border: #ddd;               /* ボーダー */
-    --color-background: #ffffff;        /* ページ背景 */
+    --color-text-primary: #1d1d1f;      /* メインテキスト（Apple風オフブラック） */
+    --color-text-secondary: #86868b;    /* サブテキスト、ヘルプテキスト（Apple風グレー） */
+    --color-border: rgba(0, 0, 0, 0.1); /* ボーダー（すっきりとした半透明） */
+    --color-background: #f5f5f7;        /* ページ背景（Apple風オフホワイト） */
+    --color-surface: #ffffff;           /* カード等の中側背景 */
     --color-white: #ffffff;             /* 白 */
     
     /* === レイアウト === */
     
     /* ボーダー半径 */
-    --border-radius-sm: 5px;            /* 小（入力フィールド） */
-    --border-radius-md: 20px;           /* 中（カード） */
-    --border-radius-lg: 30px;           /* 大（ボタン） */
+    --border-radius-sm: 8px;            /* 小（入力フィールド） */
+    --border-radius-md: 14px;           /* 中（カード） */
+    --border-radius-lg: 20px;           /* 大（ボタン） */
     
     /* シャドウ */
-    --shadow-default: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    --shadow-focus: 0 0 0 2px var(--color-primary-light);
+    --shadow-default: 0 4px 24px rgba(0, 0, 0, 0.04); /* Apple風の極薄シャドウ */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+    --shadow-focus: 0 0 0 4px var(--color-primary-light);
     
     /* スペーシング */
-    --spacing-xs: 5px;
-    --spacing-sm: 10px;
-    --spacing-md: 15px;
-    --spacing-lg: 20px;
-    --spacing-xl: 30px;
-    --spacing-xxl: 60px;
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-xxl: 64px;
     
     /* === タイポグラフィ === */
     
     /* フォントファミリー */
-    --font-family-base: 'Noto Sans JP', sans-serif;
+    --font-family-base: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro JP", "SF Pro Text", "Helvetica Neue", sans-serif;
     
     /* フォントサイズ */
     --font-size-xs: 12px;

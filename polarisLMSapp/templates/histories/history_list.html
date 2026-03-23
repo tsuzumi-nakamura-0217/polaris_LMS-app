@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}学習履歴{% endblock %}
+{% block nav_history %}active{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'histories/css/history_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="history-list-container">
+    <h1 class="page-title">学習履歴</h1>
+
+    <div class="history-table-container">
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th class="col-date">日時</th>
+                    <th class="col-student">生徒</th>
+                    <th class="col-subject">科目</th>
+                    <th class="col-problem">問題</th>
+                    <th class="col-result">結果</th>
+                    <th class="col-level">理解度</th>
+                    <th class="col-duration">所要時間</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for history in histories %}
+                <tr class="history-row">
+                    <td class="col-date">{{ history.created_at|date:"n/j H:i" }}</td>
+                    <td class="col-student">{{ history.student.user_name }}</td>
+                    <td class="col-subject">
+                        <span class="subject-badge">{{ history.problem.category.subject.subject_name }}</span>
+                    </td>
+                    <td class="col-problem">
+                        <div class="problem-text-truncate">{{ history.problem.problem|truncatechars:40 }}</div>
+                    </td>
+                    <td class="col-result">
+                        {% if history.is_correct is None %}
+                        <span class="result-badge result-none">—</span>
+                        {% elif history.is_correct %}
+                        <span class="result-badge result-correct">○ 正解</span>
+                        {% else %}
+                        <span class="result-badge result-wrong">× 不正解</span>
+                        {% endif %}
+                    </td>
+                    <td class="col-level">
+                        <span class="level-badge" data-level="{{ history.level }}">{{ history.level }}</span>
+                    </td>
+                    <td class="col-duration">
+                        {% if history.duration_seconds is not None %}
+                        {{ history.duration_seconds }}秒
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr class="empty-row">
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
+                                <polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2"/>
+                                <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2"/>
+                                <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <p>学習履歴がありません</p>
+                            <p class="empty-subtitle">問題を解くと、ここに記録が表示されます</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
+{% endblock %}

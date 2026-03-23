@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}問題を解く{% endblock %}
+{% block nav_schedules %}active{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'schedules/css/solve.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="solve-container">
+    <div class="solve-header">
+        <span class="subject-badge">{{ problem.category.subject.subject_name }}</span>
+        <span class="category-label">{{ problem.category.title }}</span>
+    </div>
+
+    <!-- ストップウォッチ -->
+    <div class="stopwatch-container">
+        <div class="stopwatch-icon">⏱️</div>
+        <div class="stopwatch-display" id="stopwatchDisplay">00:00:00</div>
+    </div>
+
+    <div class="problem-section">
+        <h1 class="problem-text">{{ problem.problem }}</h1>
+    </div>
+
+    <form method="post" action="{% url 'schedules:solve_problem' schedule.pk %}" class="answer-form">
+        {% csrf_token %}
+
+        {% if problem.problem_type == 'text' %}
+        <!-- 記述式 -->
+        <div class="form-group">
+            <label for="answer" class="form-label">解答を入力してください</label>
+            <input type="text" name="answer" id="answer" class="form-input answer-input"
+                   placeholder="ここに回答を入力" required autocomplete="off">
+        </div>
+        {% else %}
+        <!-- 選択式 -->
+        <div class="form-group">
+            <label class="form-label">選択肢から選んでください</label>
+            <div class="choices-list">
+                {% for choice in choices %}
+                <label class="choice-item" for="choice_{{ choice.id }}">
+                    <input type="radio" name="choice" id="choice_{{ choice.id }}"
+                           value="{{ choice.id }}" required>
+                    <span class="choice-label">{{ choice.choice_label }}</span>
+                    <span class="choice-text">{{ choice.choice_text }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- 理解度 -->
+        <div class="form-group">
+            <label class="form-label">理解度（自己評価）</label>
+            <div class="level-selector">
+                {% for i in "12345" %}
+                <label class="level-item" for="level_{{ i }}">
+                    <input type="radio" name="level" id="level_{{ i }}"
+                           value="{{ i }}" {% if i == "3" %}checked{% endif %}>
+                    <span class="level-star">★</span>
+                    <span class="level-number">{{ i }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'schedules:schedule_list' %}" class="cancel-btn">戻る</a>
+            <button type="submit" class="submit-btn" id="submitBtn">解答する</button>
+        </div>
+    </form>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // --- フォームと理解度の処理 ---
+    const form = document.querySelector('.answer-form');
+    const defaultLevel = '3';
+    let levelChanged = false;
+
+    // 理解度のラジオボタンの変更を監視
+    document.querySelectorAll('input[name="level"]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            levelChanged = true;
+        });
+    });
+
+    form.addEventListener('submit', function(e) {
+        if (!levelChanged) {
+            e.preventDefault();
+            if (confirm('理解度が変更されていません。このまま解答しますか？')) {
+                form.submit();
+            }
+        }
+    });
+
+    // --- ストップウォッチの処理 ---
+    const stopwatchDisplay = document.getElementById('stopwatchDisplay');
+    let startTime = Date.now();
+    let timerInterval;
+
+    function updateStopwatch() {
+        const now = Date.now();
+        const diff = Math.floor((now - startTime) / 1000); // 経過秒数
+
+        const hours = Math.floor(diff / 3600);
+        const minutes = Math.floor((diff % 3600) / 60);
+        const seconds = diff % 60;
+
+        const formattedTime = 
+            String(hours).padStart(2, '0') + ':' + 
+            String(minutes).padStart(2, '0') + ':' + 
+            String(seconds).padStart(2, '0');
+            
+        stopwatchDisplay.textContent = formattedTime;
+    }
+
+    // 1秒ごとに更新
+    timerInterval = setInterval(updateStopwatch, 1000);
+
+    // ページ遷移時やフォーム送信時にタイマーを止める（念のため）
+    window.addEventListener('beforeunload', function() {
+        clearInterval(timerInterval);
+    });
+});
+</script>
+{% endblock %}

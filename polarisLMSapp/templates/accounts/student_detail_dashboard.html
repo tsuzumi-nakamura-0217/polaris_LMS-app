@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}ホーム - 学びのポラリス{% endblock %}
+{% block title %}{{ target_student.user_name }}さんのダッシュボード - 学びのポラリス{% endblock %}
 
 {% block nav_home %}active{% endblock %}
 
@@ -13,7 +13,13 @@
 <main class="main-content">
             <!-- ヘッダー -->
             <header class="page-header">
-                <h1 class="greeting">{{ user.user_name }}さん、こんにちは！</h1>
+                <h1 class="greeting">
+                    {% if user.user_type == 'student' %}
+                        {{ user.user_name }}さん、こんにちは！
+                    {% else %}
+                        {{ target_student.user_name }} さんのダッシュボード
+                    {% endif %}
+                </h1>
                 <div class="stats">
                     <div class="stat-item">
                         <p class="stat-label">総ログイン日数</p>
@@ -111,7 +117,11 @@
 
             <div class="tasks-list" id="tasksList">
                 {% for schedule in today_schedules %}
+                {% if user.user_type == 'student' %}
                 <a href="{% if schedule.status.status != '完了' %}{% url 'schedules:solve_problem' schedule.pk %}{% else %}#{% endif %}" class="task-card-link" style="text-decoration: none; color: inherit; display: block;">
+                {% else %}
+                <div class="task-card-link" style="display: block;">
+                {% endif %}
                     <div class="task-card {% if schedule.status.status == '完了' %}task-completed{% endif %}">
                         <h3 class="task-title">{{ schedule.problem.problem|truncatechars:20 }}</h3>
                         <div class="task-meta">
@@ -132,7 +142,7 @@
                             </svg>
                         </div>
                     </div>
-                </a>
+                {% if user.user_type == 'student' %}</a>{% else %}</div>{% endif %}
                 {% empty %}
                 <div class="task-empty">
                     <p>予定されている問題はありません。<br>ゆっくり休みましょう！</p>

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}解答確認{% endblock %}
+{% block nav_problems %}active{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'problems/css/problem_answer.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="answer-stage">
+    <section class="answer-shell">
+        <header class="answer-headline">
+            <div class="answer-title-wrap">
+                <span class="answer-dot" aria-hidden="true"></span>
+                <h1 class="answer-title">{{ problem.category.title }} | 解答確認</h1>
+            </div>
+            <p class="answer-meta">{{ problem.category.grade }}年 | {{ problem.category.subject.subject_name }}</p>
+        </header>
+
+        <section class="answer-body" aria-label="解答内容">
+            <article class="question-card">
+                <h2 class="section-title">問題</h2>
+                <p class="question-text">{{ problem.problem }}</p>
+            </article>
+
+            <article class="solution-card">
+                <h2 class="section-title">正解</h2>
+
+                {% if problem.problem_type == 'choice' and correct_choices %}
+                <ul class="correct-choice-list">
+                    {% for choice in correct_choices %}
+                    <li class="correct-choice-item">
+                        <span class="correct-choice-label">{{ choice.choice_label }}</span>
+                        <span class="correct-choice-text">{{ choice.choice_text }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-answer">{{ problem.answer|default:'解答は未設定です。' }}</p>
+                {% endif %}
+            </article>
+        </section>
+
+        <nav class="answer-actions" aria-label="戻る操作">
+            <a href="{% url 'problems:problem_detail' problem.pk %}" class="action-btn action-btn-back">問題に戻る</a>
+            <a href="{% url 'problems:problem_list' %}" class="action-btn action-btn-list">問題一覧へ</a>
+        </nav>
+    </section>
+</main>
+{% endblock %}
